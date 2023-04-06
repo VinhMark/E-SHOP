@@ -118,17 +118,14 @@ router.post(
 
 // Load user
 router.get(
-  'getUser',
+  '/getUser',
   isAuthenticated,
-  catchAsyncErrors(async (req, res, next) => {
+  catchAsyncErrors((req, res, next) => {
     try {
-      const user = await user.findById(req.user.id);
-
-      if (!user) {
+      if (!req.user) {
         return next(new ErrorHandler("User doesn't exists.", 400));
       }
-
-      res.status(200).json({ success: true, user });
+      res.status(200).json({ success: true, user: req.user });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
