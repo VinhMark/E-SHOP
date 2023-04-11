@@ -7,23 +7,23 @@ import { productData } from '../static/data';
 import SuggestedProduct from '../components/Products/SuggestedProduct';
 
 const ProductDetailPage = () => {
-  const { name } = useParams();
-  const [data, setData] = useState(null);
-  const productName = name.replace(/-/g, ' ');
+	const { name } = useParams();
+	const [data, setData] = useState(null);
+	const productName = name.replace(/-/g, ' ');
 
-  useEffect(() => {
-    const data = productData.find((i) => i.name === productName);
-    setData(data);
-  }, [productName]);
+	useEffect(() => {
+		const data = productData.find((i) => i.name === productName);
+		setData(data);
+	}, [productName]);
 
-  return (
-    <div>
-      <Header activeHeading={3} />
-      <ProductDetail data={data} />
-      {data && <SuggestedProduct />}
-      <Footer />
-    </div>
-  );
+	return (
+		<div>
+			<Header activeHeading={3} />
+			<ProductDetail data={data} />
+			{data && <SuggestedProduct data={data} />}
+			<Footer />
+		</div>
+	);
 };
 
 export default ProductDetailPage;
