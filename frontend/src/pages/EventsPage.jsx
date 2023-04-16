@@ -1,6 +1,6 @@
-import React from 'react'
-import Header from '../components/Layout/Header'
-import EventCard from '../components/Events/EventCard'
+import React from 'react';
+import Header from '../components/Layout/Header';
+import EventCard from '../components/Events/EventCard';
 
 const EventsPage = () => {
   return (
@@ -9,7 +9,7 @@ const EventsPage = () => {
       <EventCard />
       <EventCard />
     </div>
-  )
-}
+  );
+};
 
-export default EventsPage
+export default EventsPage;

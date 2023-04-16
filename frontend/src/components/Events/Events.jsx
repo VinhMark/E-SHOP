@@ -1,6 +1,6 @@
-import React from 'react'
-import styles from '../../styles/style'
-import EventCard from './EventCard'
+import React from 'react';
+import styles from '../../styles/style';
+import EventCard from './EventCard';
 
 const Events = () => {
   return (
@@ -9,11 +9,11 @@ const Events = () => {
         <h1>Popular Events</h1>
       </div>
 
-      <div className="w-full grid">
+      <div className='w-full grid'>
         <EventCard />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Events
+export default Events;

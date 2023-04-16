@@ -14,13 +14,34 @@ import {
   ProductDetailPage,
   ProductsPage,
   SignUpPage,
+  ProfilePage,
 } from './Routes';
 import { loadUser } from './redux/actions/user';
 import Store from './redux/store';
+import { useSelector } from 'react-redux';
+import ProtectedRoute from './ProtectedRoute';
+
+const getCookie = (name) => {
+  var cookies = document.cookie.split(';');
+  if (!cookies.length) {
+    return null;
+  }
+
+  for (let i = 0; i < cookies.length; i++) {
+    const cookiePair = cookies[i].split('=');
+    if (name === cookiePair[0].trim()) {
+      return decodeURIComponent(cookiePair[1]);
+    }
+  }
+  return null;
+};
 
 const App = () => {
+  const { isAuthenticated, loading } = useSelector((state) => state.user);
+
   useEffect(() => {
-    Store.dispatch(loadUser());
+    const isLogin = getCookie('token');
+    isLogin && Store.dispatch(loadUser());
   }, []);
 
   return (
@@ -35,6 +56,14 @@ const App = () => {
         <Route path='/best-selling' element={<BestSellingPage />} />
         <Route path='/events' element={<EventsPage />} />
         <Route path='/faq' element={<FAQPage />} />
+        <Route
+          path='/profile'
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
 
       {/* Notification config */}

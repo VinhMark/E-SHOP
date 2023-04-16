@@ -12,12 +12,10 @@ const BestSellingPage = () => {
 
   useEffect(() => {
     if (!categoryData) {
-      const d =
-        productData && productData.sort((a, b) => b.total_sell - a.total_sell);
+      const d = productData && productData.sort((a, b) => b.total_sell - a.total_sell);
       setData(d);
     } else {
-      const d =
-        productData && productData.filter((i) => i.category === categoryData);
+      const d = productData && productData.filter((i) => i.category === categoryData);
       setData(d);
     }
   }, [categoryData]);

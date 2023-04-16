@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 
 const CountDown = () => {
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
@@ -8,8 +8,8 @@ const CountDown = () => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
 
-    return () => clearInterval(timer)
-  }, [])
+    return () => clearInterval(timer);
+  }, []);
 
   function calculateTimeLeft() {
     const difference = +new Date('2023-04-10') - +new Date();
@@ -20,34 +20,27 @@ const CountDown = () => {
         days: Math.floor(difference / (1000 * 60 * 60 * 24)),
         hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
         minutes: Math.floor((difference / (1000 * 60)) % 60),
-        seconds: Math.floor((difference / (1000)) % 60)
+        seconds: Math.floor((difference / 1000) % 60),
       };
     }
-    return timeLeft
+    return timeLeft;
   }
 
-  const timerComponent = Object.keys(timeLeft).map(interval => {
+  const timerComponent = Object.keys(timeLeft).map((interval) => {
     if (!timeLeft[interval]) {
       return null;
     }
 
     return (
       <span className='text-[25px] text-[#475ad2]' key={interval}>
-        {timeLeft[interval]} {interval} {' '}
+        {timeLeft[interval]} {interval}{' '}
       </span>
     );
   });
 
-
   return (
-    <div>
-      {timerComponent.length > 0 ? (
-        timerComponent
-      ) : (
-        <span className='text-[red] text-[25px]'>Time's up</span>
-      )}
-    </div>
-  )
-}
+    <div>{timerComponent.length > 0 ? timerComponent : <span className='text-[red] text-[25px]'>Time's up</span>}</div>
+  );
+};
 
-export default CountDown
+export default CountDown;

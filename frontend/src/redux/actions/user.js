@@ -22,3 +22,8 @@ export const loadUser = () => async (dispatch) => {
     });
   }
 };
+
+// clear user
+export const clearUser = () => async (dispatch) => {
+  dispatch({ type: 'clearUser' });
+};

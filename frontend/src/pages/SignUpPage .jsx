@@ -1,22 +1,19 @@
-import { useNavigate } from "react-router-dom"
-import SignUp from "../components/SignUp/SignUp"
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
+import SignUp from '../components/SignUp/SignUp';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
 const SignUpPage = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useSelector(state => state.user);
+  const { isAuthenticated } = useSelector((state) => state.user);
 
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/');
     }
-  }, [navigate, isAuthenticated])
+  }, [navigate, isAuthenticated]);
 
+  return <SignUp />;
+};
 
-  return (
-    <SignUp />
-  )
-}
-
-export default SignUpPage 
+export default SignUpPage;

@@ -37,8 +37,7 @@ router.post('/create-user', upload.single('file'), async (req, res, next) => {
       });
       res.status(200).json({
         success: true,
-        message:
-          'Please check your email: ' + user.email + ' to active your account.',
+        message: 'Please check your email: ' + user.email + ' to active your account.',
       });
     } catch (error) {
       removeImg(req.file.filename);
@@ -62,10 +61,7 @@ router.post(
       const { activation_token } = req.body;
       img = jwt.decode(activation_token)?.avatar;
 
-      const newUser = jwt.verify(
-        activation_token,
-        process.env.ACTIVATION_SECRET
-      );
+      const newUser = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
 
       if (!newUser) {
         return next(new ErrorHandler('Invalid token', 400));
@@ -104,9 +100,7 @@ router.post(
 
       const isPasswordValid = await user.comparePassword(password);
       if (!isPasswordValid) {
-        return next(
-          new ErrorHandler('Please provide the correct information', 400)
-        );
+        return next(new ErrorHandler('Please provide the correct information', 400));
       }
 
       sendToken(user, 200, res);
@@ -126,6 +120,24 @@ router.get(
         return next(new ErrorHandler("User doesn't exists.", 400));
       }
       res.status(200).json({ success: true, user: req.user });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// Logout
+router.get(
+  '/logout',
+  isAuthenticated,
+  catchAsyncErrors((req, res, next) => {
+    try {
+      res.clearCookie('token');
+
+      res.status(201).json({
+        success: true,
+        message: 'User logged out successfully!',
+      });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
