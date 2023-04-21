@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { RxCross1 } from 'react-icons/rx';
-import styles from '../../../styles/style';
+import styles from 'styles/style';
 import { AiFillHeart, AiOutlineHeart, AiOutlineMessage, AiOutlineShoppingCart } from 'react-icons/ai';
 
 const ProductDetailCard = ({ setOpen, data }) => {

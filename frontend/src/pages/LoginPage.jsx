@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import Login from '../components/Login/Login';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import Login from 'components/Login';
 
 const LoginPage = () => {
   const navigate = useNavigate();

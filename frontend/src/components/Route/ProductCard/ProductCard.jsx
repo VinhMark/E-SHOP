@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import styles from '../../../styles/style';
+import styles from 'styles/style';
 import { AiFillHeart, AiFillStar, AiOutlineEye, AiOutlineHeart, AiOutlineShoppingCart, AiOutlineStar } from 'react-icons/ai';
 import ProductDetailCard from '../ProductDetailCard/ProductDetailCard';
 

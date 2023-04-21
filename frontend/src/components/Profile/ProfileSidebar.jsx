@@ -5,18 +5,16 @@ import { MdOutlineTrackChanges } from 'react-icons/md';
 import { TbAddressBook } from 'react-icons/tb';
 import { RxPerson } from 'react-icons/rx';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { server } from '../../server';
 import { toast } from 'react-toastify';
-import Store from '../../redux/store';
-import { clearUser } from '../../redux/actions/user';
+import Store from 'redux/store';
+import { clearUser } from 'redux/actions/user';
+import API from 'api';
 
 const ProfileSidebar = ({ active, setActive }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    axios
-      .get(`${server}/user/logout`, { withCredentials: true })
+    API.get('/user/logout', { withCredentials: true })
       .then((res) => {
         toast.success(res.data.message);
         Store.dispatch(clearUser());
@@ -33,7 +31,7 @@ const ProfileSidebar = ({ active, setActive }) => {
         className={`flex items-center cursor-pointer w-full mb-8 ${active === 1 && 'text-[red]'}`}
       >
         <RxPerson size={20} />
-        <span className='pl-3'>Profile</span>
+        <span className='pl-3 hidden 800px:block'>Profile</span>
       </div>
 
       {/* item menu */}
@@ -42,7 +40,7 @@ const ProfileSidebar = ({ active, setActive }) => {
         className={`flex items-center cursor-pointer  w-full mb-8 ${active === 2 && 'text-[red]'}`}
       >
         <HiOutlineShoppingCart size={20} />
-        <span className='pl-3'>Orders</span>
+        <span className='pl-3 hidden 800px:block'>Orders</span>
       </div>
 
       {/* item menu */}
@@ -51,7 +49,7 @@ const ProfileSidebar = ({ active, setActive }) => {
         className={`flex items-center cursor-pointer  w-full mb-8 ${active === 3 && 'text-[red]'}`}
       >
         <HiOutlineReceiptRefund size={20} />
-        <span className='pl-3'>Refunds</span>
+        <span className='pl-3 hidden 800px:block'>Refunds</span>
       </div>
 
       {/* item menu */}
@@ -60,7 +58,7 @@ const ProfileSidebar = ({ active, setActive }) => {
         className={`flex items-center cursor-pointer  w-full mb-8 ${active === 4 && 'text-[red]'}`}
       >
         <AiOutlineMessage size={20} />
-        <span className='pl-3'>Inbox</span>
+        <span className='pl-3 hidden 800px:block'>Inbox</span>
       </div>
 
       {/* item menu */}
@@ -69,7 +67,7 @@ const ProfileSidebar = ({ active, setActive }) => {
         className={`flex items-center cursor-pointer  w-full mb-8 ${active === 5 && 'text-[red]'}`}
       >
         <MdOutlineTrackChanges size={20} />
-        <span className='pl-3'>Track order</span>
+        <span className='pl-3 hidden 800px:block'>Track order</span>
       </div>
 
       {/* item menu */}
@@ -78,7 +76,7 @@ const ProfileSidebar = ({ active, setActive }) => {
         className={`flex items-center cursor-pointer  w-full mb-8 ${active === 6 && 'text-[red]'}`}
       >
         <AiOutlineCreditCard size={20} />
-        <span className='pl-3'>Payment method</span>
+        <span className='pl-3 hidden 800px:block'>Payment method</span>
       </div>
 
       {/* item menu */}
@@ -87,7 +85,7 @@ const ProfileSidebar = ({ active, setActive }) => {
         className={`flex items-center cursor-pointer  w-full mb-8 ${active === 7 && 'text-[red]'}`}
       >
         <TbAddressBook size={20} />
-        <span className='pl-3'>Address</span>
+        <span className='pl-3 hidden 800px:block'>Address</span>
       </div>
 
       {/* item menu */}
@@ -96,7 +94,7 @@ const ProfileSidebar = ({ active, setActive }) => {
         className={`flex items-center cursor-pointer w-full ${active === 8 && 'text-[red]'}`}
       >
         <AiOutlineLogin size={20} />
-        <span className='pl-3'>Log out</span>
+        <span className='pl-3 hidden 800px:block'>Log out</span>
       </div>
     </div>
   );

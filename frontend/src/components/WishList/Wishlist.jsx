@@ -2,7 +2,7 @@ import React from 'react';
 import { AiOutlineHeart } from 'react-icons/ai';
 import { RxCross1 } from 'react-icons/rx';
 import { BsCartPlus } from 'react-icons/bs';
-import styles from '../../styles/style';
+import styles from 'styles/style';
 
 const Wishlist = ({ setOpenWishList }) => {
   const cartData = [

@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { server } from '../../server';
+import API from 'api';
 
 //load user
 export const loadUser = () => async (dispatch) => {
@@ -8,7 +7,7 @@ export const loadUser = () => async (dispatch) => {
       type: 'LoadUserRequest',
     });
 
-    const { data } = await axios.get(`${server}/user/getUser`, {
+    const { data } = await API.get('/user/getUser', {
       withCredentials: true,
     });
     dispatch({
@@ -17,7 +16,7 @@ export const loadUser = () => async (dispatch) => {
     });
   } catch (error) {
     dispatch({
-      type: 'LoadUserFail',
+      type: 'LoadUserFailed',
       payload: error.response.data.message,
     });
   }

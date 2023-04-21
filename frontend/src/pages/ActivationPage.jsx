@@ -1,7 +1,6 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { server } from '../server';
+import API from '../api';
 
 const ActivationPage = () => {
   const { activation_token } = useParams();
@@ -11,8 +10,8 @@ const ActivationPage = () => {
     const controller = new AbortController();
     const activationEmail = async () => {
       try {
-        const res = await axios.post(
-          `${server}/user/activation`,
+        const res = await API.post(
+          '/user/activation',
           {
             activation_token,
           },

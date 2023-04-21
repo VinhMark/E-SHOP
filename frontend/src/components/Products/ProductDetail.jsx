@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from '../../styles/style';
+import styles from 'styles/style';
 import { useNavigate } from 'react-router-dom';
 import { HiOutlineMinus, HiPlus } from 'react-icons/hi';
 import { AiFillHeart, AiOutlineHeart, AiOutlineMessage, AiOutlineShoppingCart } from 'react-icons/ai';

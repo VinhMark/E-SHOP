@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { backend_url } from '../../server';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { AiOutlineArrowRight, AiOutlineCamera, AiOutlineDelete } from 'react-icons/ai';
 import { MdOutlineTrackChanges } from 'react-icons/md';
-import styles from '../../styles/style';
+import styles from 'styles/style';
 import { Button } from '@material-ui/core';
 import { DataGrid } from '@material-ui/data-grid';
+import { backend_url } from 'api/server';
 
 const ProfileContent = ({ active }) => {
   const { user, loading } = useSelector((state) => state.user);
@@ -42,10 +42,10 @@ const ProfileContent = ({ active }) => {
 
           <div className='w-full px-5 mt-12'>
             <form onSubmit={handleSubmit}>
-              <div className='w-full flex pb-3'>
+              <div className='w-full flex pb-3 flex-wrap'>
                 {/* Full name input */}
-                <div className='w-[50%]'>
-                  <label className='block pb-2'>Full Name</label>
+                <div className='w-full 800px:w-[50%] pb-3'>
+                  <label className='block pb-2 font-bold'>Full Name</label>
                   <input
                     type='text'
                     className={`${styles.input} !w-[95%]`}
@@ -56,8 +56,8 @@ const ProfileContent = ({ active }) => {
                 </div>
 
                 {/* Email input */}
-                <div className='w-[50%]'>
-                  <label className='block pb-2'>Email</label>
+                <div className='w-full 800px:w-[50%]'>
+                  <label className='block pb-2 font-bold'>Email</label>
                   <input
                     type='email'
                     className={`${styles.input}`}
@@ -67,10 +67,10 @@ const ProfileContent = ({ active }) => {
                   />
                 </div>
               </div>
-              <div className='w-full flex pb-3'>
+              <div className='w-full flex pb-3 flex-wrap'>
                 {/* Phone number input */}
-                <div className='w-[50%]'>
-                  <label className='block pb-2'>Phone Number</label>
+                <div className='w-full 800px:w-[50%] pb-3'>
+                  <label className='block pb-2 font-bold'>Phone Number</label>
                   <input
                     type='text'
                     className={`${styles.input} !w-[95%]`}
@@ -81,8 +81,8 @@ const ProfileContent = ({ active }) => {
                 </div>
 
                 {/* Email input */}
-                <div className='w-[50%]'>
-                  <label className='block pb-2'>Zip Code</label>
+                <div className='w-full 800px:w-[50%]'>
+                  <label className='block pb-2 font-bold'>Zip Code</label>
                   <input
                     type='text'
                     className={`${styles.input}`}
@@ -92,10 +92,10 @@ const ProfileContent = ({ active }) => {
                   />
                 </div>
               </div>
-              <div className='w-full flex pb-3'>
+              <div className='w-full flex pb-3 flex-wrap'>
                 {/* Address 1 input */}
-                <div className='w-[50%]'>
-                  <label className='block pb-2'>Address 1</label>
+                <div className='w-full 800px:w-[50%] pb-3'>
+                  <label className='block pb-2 font-bold'>Address 1</label>
                   <input
                     type='text'
                     className={`${styles.input} !w-[95%]`}
@@ -106,8 +106,8 @@ const ProfileContent = ({ active }) => {
                 </div>
 
                 {/* Address 2 input */}
-                <div className='w-[50%]'>
-                  <label className='block pb-2'>Address 2</label>
+                <div className='w-full 800px:w-[50%]'>
+                  <label className='block pb-2 font-bold'>Address 2</label>
                   <input
                     type='text'
                     className={`${styles.input}`}
@@ -121,7 +121,7 @@ const ProfileContent = ({ active }) => {
               {/* button */}
               <input
                 type='submit'
-                className={`w-[250px] h-[40px] border border-[#3a24db] text-center text-[#3a24db] rounded-[3px] mt-8 cursor-pointer hover:bg-[#3a24db] hover:text-white transition duration-300`}
+                className={`w-full 800px:w-[250px] h-[40px] border border-[#3a24db] text-center text-[#3a24db] rounded-[3px] mt-8 cursor-pointer hover:bg-[#3a24db] hover:text-white transition duration-300`}
                 value='Update'
               />
             </form>

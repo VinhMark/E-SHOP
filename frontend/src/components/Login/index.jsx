@@ -1,12 +1,11 @@
-import axios from 'axios';
 import React, { useState } from 'react';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { server } from '../../server';
-import styles from '../../styles/style';
-import Store from '../../redux/store';
-import { loadUser } from '../../redux/actions/user';
+import styles from 'styles/style';
+import Store from 'redux/store';
+import { loadUser } from 'redux/actions/user';
+import API from 'api';
 
 const Login = () => {
   const [user, setUser] = useState({ email: '', password: '' });
@@ -15,8 +14,7 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios
-      .post(`${server}/user/login`, user, { withCredentials: true })
+    API.post('/user/login', user, { withCredentials: true })
       .then(() => {
         toast.success('login success');
         // Get data user

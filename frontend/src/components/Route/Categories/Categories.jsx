@@ -1,6 +1,6 @@
 import React from 'react'
-import styles from '../../../styles/style'
-import { brandingData, categoriesData } from '../../../static/data'
+import styles from 'styles/style'
+import { brandingData, categoriesData } from 'static/data'
 import { useNavigate } from 'react-router-dom'
 
 const Categories = () => {

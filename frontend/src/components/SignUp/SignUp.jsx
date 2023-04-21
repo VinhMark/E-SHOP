@@ -2,10 +2,9 @@ import { useState } from 'react';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { RxAvatar } from 'react-icons/rx';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import styles from '../../styles/style';
-import { server } from '../../server';
+import styles from 'styles/style';
 import { toast } from 'react-toastify';
+import API from 'api';
 
 const SignUp = () => {
   const [user, setUser] = useState({
@@ -35,8 +34,7 @@ const SignUp = () => {
     newForm.append('name', user.fullName);
     newForm.append('password', user.password);
     newForm.append('email', user.email);
-    axios
-      .post(`${server}/user/create-user`, newForm, config)
+    API.post('/user/create-user', newForm, config)
       .then((res) => {
         setLoading(false);
         toast.success(res.data.message);
@@ -50,9 +48,7 @@ const SignUp = () => {
   return (
     <div className='min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
       <div className='sm:mx-auto sm:w-full sm:max-w-md'>
-        <h2 className='mt-6 text-center text-3xl font-extrabold text-gray-900'>
-          Register as new user
-        </h2>
+        <h2 className='mt-6 text-center text-3xl font-extrabold text-gray-900'>Register as new user</h2>
       </div>
 
       <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
@@ -60,10 +56,7 @@ const SignUp = () => {
           <form className='space-y-6' onSubmit={handleSubmit}>
             {/* Full name */}
             <div>
-              <label
-                htmlFor='fullName'
-                className='block text-sm font-medium text-gray-700'
-              >
+              <label htmlFor='fullName' className='block text-sm font-medium text-gray-700'>
                 Full Name
               </label>
               <div className='mt-1'>
@@ -84,10 +77,7 @@ const SignUp = () => {
 
             {/* Email */}
             <div>
-              <label
-                htmlFor='email'
-                className='block text-sm font-medium text-gray-700'
-              >
+              <label htmlFor='email' className='block text-sm font-medium text-gray-700'>
                 Email Address
               </label>
               <div className='mt-1'>
@@ -107,10 +97,7 @@ const SignUp = () => {
             </div>
             {/* Password */}
             <div>
-              <label
-                htmlFor='password'
-                className='block text-sm font-medium text-gray-700'
-              >
+              <label htmlFor='password' className='block text-sm font-medium text-gray-700'>
                 Password
               </label>
               <div className='mt-1 relative'>
@@ -144,10 +131,7 @@ const SignUp = () => {
 
             {/* Avatar */}
             <div>
-              <label
-                htmlFor='avatar'
-                className='block text-sm font-medium text-gray-700'
-              ></label>
+              <label htmlFor='avatar' className='block text-sm font-medium text-gray-700'></label>
               <div className='mt-2 flex items-center'>
                 <span className='inline-block h-8 w-8 rounded-full overflow-hidden'>
                   {user.avatar ? (

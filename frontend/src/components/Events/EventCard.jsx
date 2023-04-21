@@ -1,4 +1,4 @@
-import styles from '../../styles/style';
+import styles from 'styles/style';
 import CountDown from './CountDown';
 
 const EventCard = ({ active }) => {
