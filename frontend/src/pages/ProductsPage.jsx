@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Header from '../components/Layout/Header';
 import styles from '../styles/style';
 import { useSearchParams } from 'react-router-dom';
-import { productData } from '../static/data';
 import ProductCard from '../components/Route/ProductCard/ProductCard';
+import API from 'api';
 
 const ProductsPage = () => {
   const [searchParams] = useSearchParams();
@@ -12,13 +12,7 @@ const ProductsPage = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    if (!categoryData) {
-      const d = productData && productData.sort((a, b) => a.total_sell - b.total_sell);
-      setData(d);
-    } else {
-      const d = productData && productData.filter((i) => i.category === categoryData);
-      setData(d);
-    }
+    API.get('/product/get-all-products?category=' + categoryData).then((res) => setData(res.data.products));
   }, [categoryData]);
 
   return (

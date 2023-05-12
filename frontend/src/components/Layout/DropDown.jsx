@@ -1,14 +1,17 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styles from 'styles/style';
 
 const DropDown = ({ categoriesData, setDropdown }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
+  console.log();
   const handleSubmit = (i) => {
-    navigate(`/products?category=${i.title}`);
+    navigate(
+      `/${location.pathname.split('/')[1] === 'best-selling' ? 'best-selling' : 'products'}?category=${i.title}`
+    );
     setDropdown(false);
-    // window.location.reload();
   };
 
   return (

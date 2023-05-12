@@ -5,13 +5,13 @@ import { useNavigate } from 'react-router-dom';
 
 const ShopLoginPage = () => {
   const navigate = useNavigate();
-  const { isSeller } = useSelector((state) => state.shop);
+  const { isSeller, isLoading } = useSelector((state) => state.shop);
 
   useEffect(() => {
     if (isSeller) {
-      navigate('/');
+      navigate('/dashboard');
     }
-  }, [navigate, isSeller]);
+  }, [navigate, isSeller, isLoading]);
 
   return <ShopLogin />;
 };

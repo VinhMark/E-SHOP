@@ -15,102 +15,158 @@ import {
   ProductsPage,
   SignUpPage,
   ProfilePage,
-  ShopCreatePage,
+  CheckoutPage,
+} from './routes/UserRoutes';
+
+import {
   SellerActivationPage,
-  ShopLoginPage,
+  ShopAllCouponPage,
+  ShopAllEventsPage,
+  ShopAllProducts,
+  ShopCreateEventPage,
+  ShopCreatePage,
+  ShopCreateProduct,
+  ShopDashboardPage,
   ShopHomePage,
-} from './Routes';
+  ShopLoginPage,
+} from './routes/ShopRoutes';
 import { loadUser } from './redux/actions/user';
 import Store from './redux/store';
-import { useSelector } from 'react-redux';
-import ProtectedRoute from './ProtectedRoute';
+import ProtectedRoute from 'routes/ProtectedRoute';
 import { loadShop } from 'redux/actions/shop';
-import SellerProtectedRoute from 'SellerProtectedRoute';
+import SellerProtectedRoute from 'routes/SellerProtectedRoute';
+import { useSelector } from 'react-redux';
+import Loader from 'components/shop/Layout/Loader';
 
-// const getCookie = (name) => {
-//   var cookies = document.cookie.split(';');
-//   if (!cookies.length) {
-//     return null;
-//   }
+const getCookie = (name) => {
+  var cookies = document.cookie.split(';');
+  if (!cookies.length) {
+    return null;
+  }
 
-//   for (let i = 0; i < cookies.length; i++) {
-//     const cookiePair = cookies[i].split('=');
-//     if (name === cookiePair[0].trim()) {
-//       return decodeURIComponent(cookiePair[1]);
-//     }
-//   }
-//   return null;
-// };
+  for (let i = 0; i < cookies.length; i++) {
+    const cookiePair = cookies[i].split('=');
+    if (name === cookiePair[0].trim()) {
+      return decodeURIComponent(cookiePair[1]);
+    }
+  }
+  return null;
+};
 
 const App = () => {
-  const { isAuthenticated, loading } = useSelector((state) => state.user);
-  const { isSeller, isLoading, seller } = useSelector((state) => state.shop);
+  const { isStart, isLoading } = useSelector((state) => state.common);
+  console.log(isStart, isLoading);
 
   useEffect(() => {
-    // const token = getCookie('token');
-    Store.dispatch(loadUser());
-    Store.dispatch(loadShop());
+    const tokenUser = getCookie('token-user');
+    const tokenShop = getCookie('token-shop');
+    tokenUser && Store.dispatch(loadUser());
+    tokenShop && Store.dispatch(loadShop());
+    // Check is not login user or shop
+    if (!tokenUser || tokenShop) {
+      Store.dispatch({ type: 'StartApp' });
+    }
   }, []);
 
+  if (isLoading || !isStart) {
+    return <Loader />;
+  }
+
   return (
-    <>
-      {isLoading && loading ? (
-        <span>Loading...</span>
-      ) : (
-        <BrowserRouter>
-          <Routes>
-            <Route path='/' element={<HomePage />} />
-            <Route path='/login' element={<LoginPage />} />
-            <Route path='/sign-up' element={<SignUpPage />} />
-            <Route path='/activation/:activation_token' element={<ActivationPage />} />
-            <Route path='/products' element={<ProductsPage />} />
-            <Route path='/product/:name' element={<ProductDetailPage />} />
-            <Route path='/best-selling' element={<BestSellingPage />} />
-            <Route path='/events' element={<EventsPage />} />
-            <Route path='/faq' element={<FAQPage />} />
-            <Route
-              path='/profile'
-              element={
-                <ProtectedRoute isAuthenticated={isAuthenticated}>
-                  <ProfilePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route path='/shop-create' element={<ShopCreatePage />} />
-            <Route path='/seller/activation/:activation_token' element={<SellerActivationPage />} />
-            <Route
-              path='/shop-login'
-              element={
-                <SellerProtectedRoute isSeller={isSeller} seller={seller}>
-                  <ShopLoginPage />
-                </SellerProtectedRoute>
-              }
-            />
-            <Route
-              path='/shop/:id'
-              element={
-                <SellerProtectedRoute isSeller={isSeller} seller={seller}>
-                  <ShopHomePage />
-                </SellerProtectedRoute>
-              }
-            />
-          </Routes>{' '}
-          {/* Notification config */}
-          <ToastContainer
-            position='top-right'
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            pauseOnHover
-            draggable
-            theme='colored'
-          />
-        </BrowserRouter>
-      )}
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<HomePage />} />
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/sign-up' element={<SignUpPage />} />
+        <Route path='/activation/:activation_token' element={<ActivationPage />} />
+        <Route path='/products' element={<ProductsPage />} />
+        <Route path='/product/:slug' element={<ProductDetailPage />} />
+        <Route path='/best-selling' element={<BestSellingPage />} />
+        <Route path='/events' element={<EventsPage />} />
+        <Route path='/faq' element={<FAQPage />} />
+        <Route path='/checkout' element={<CheckoutPage />} />
+        <Route
+          path='/profile'
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path='/shop-create' element={<ShopCreatePage />} />
+        <Route path='/seller/activation/:activation_token' element={<SellerActivationPage />} />
+        <Route path='/shop-login' element={<ShopLoginPage />} />
+        <Route
+          path='/shop/:id'
+          element={
+            <SellerProtectedRoute>
+              <ShopHomePage />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path='/dashboard'
+          element={
+            <SellerProtectedRoute>
+              <ShopDashboardPage />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path='/dashboard-create-product'
+          element={
+            <SellerProtectedRoute>
+              <ShopCreateProduct />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path='/dashboard-products'
+          element={
+            <SellerProtectedRoute>
+              <ShopAllProducts />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path='/dashboard-create-event'
+          element={
+            <SellerProtectedRoute>
+              <ShopCreateEventPage />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path='/dashboard-events'
+          element={
+            <SellerProtectedRoute>
+              <ShopAllEventsPage />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path='/dashboard-coupons'
+          element={
+            <SellerProtectedRoute>
+              <ShopAllCouponPage />
+            </SellerProtectedRoute>
+          }
+        />
+      </Routes>
+      {/* Notification config */}
+      <ToastContainer
+        position='top-right'
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        pauseOnHover
+        draggable
+        theme='colored'
+      />
+    </BrowserRouter>
   );
 };
 

@@ -3,18 +3,21 @@ import Header from '../components/Layout/Header';
 import Footer from '../components/Layout/Footer';
 import ProductDetail from '../components/Products/ProductDetail';
 import { useParams } from 'react-router-dom';
-import { productData } from '../static/data';
 import SuggestedProduct from '../components/Products/SuggestedProduct';
+import API from 'api';
 
 const ProductDetailPage = () => {
-  const { name } = useParams();
+  const { slug } = useParams();
   const [data, setData] = useState(null);
-  const productName = name.replace(/-/g, ' ');
 
   useEffect(() => {
-    const data = productData.find((i) => i.name === productName);
-    setData(data);
-  }, [productName]);
+    API.get('/product/get-product-slug/' + slug)
+      .then((res) => {
+        console.log(res.data.product);
+        setData(res.data.product);
+      })
+      .catch((err) => console.log(err.response.data));
+  }, [slug]);
 
   return (
     <div>

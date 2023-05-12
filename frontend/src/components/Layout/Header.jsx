@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import styles from 'styles/style';
-import { categoriesData, productData } from 'static/data';
+import { categoriesData } from 'static/data';
 import { AiOutlineHeart, AiOutlineSearch, AiOutlineShoppingCart } from 'react-icons/ai';
 import { IoIosArrowDown, IoIosArrowForward } from 'react-icons/io';
 import { BiMenuAltLeft } from 'react-icons/bi';
@@ -13,8 +13,11 @@ import { backend_url } from 'api/server';
 import Cart from '../Cart';
 import Wishlist from '../WishList/Wishlist';
 import { RxCross1 } from 'react-icons/rx';
+import API from 'api';
 
 const Header = ({ activeHeading }) => {
+  const { wishItems } = useSelector((state) => state.wish);
+  const { cart } = useSelector((state) => state.cart);
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchData, setSearchData] = useState(null);
@@ -24,22 +27,33 @@ const Header = ({ activeHeading }) => {
   const [openCart, setOpenCart] = useState(false);
   const [openWishList, setOpenWishList] = useState(false);
   const [open, setOpen] = useState(false);
+  let timeOut;
+  let keyWork = '';
+
+  useEffect(() => {
+    const handleScroll = () => setActive(window.scrollY > 70);
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const handleSearchChange = (e) => {
-    const term = e.target.value;
-    setSearchTerm(term);
-    setShowSearch(true);
-
-    const filterProducts =
-      productData &&
-      productData.filter((product) => {
-        return product.name.toLowerCase().includes(term.toLowerCase());
+    if (timeOut) {
+      clearTimeout(timeOut);
+    }
+    timeOut = setTimeout(() => {
+      keyWork = e.target.value;
+      setSearchTerm(keyWork);
+      API.get('/product/get-all-products-search?search=' + keyWork).then((res) => {
+        setSearchData(res.data.products);
       });
-    setSearchData(filterProducts);
+    }, 1000);
+
+    setShowSearch(true);
   };
 
   const handleFocusInputSearch = (e) => {
-    console.log(e.target.value);
     if (e.target.value !== '') {
       setShowSearch(true);
     }
@@ -51,15 +65,6 @@ const Header = ({ activeHeading }) => {
     setSearchTerm('');
     setSearchData(null);
   };
-
-  useEffect(() => {
-    const handleScroll = () => setActive(window.scrollY > 70);
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   return (
     <>
@@ -76,7 +81,6 @@ const Header = ({ activeHeading }) => {
             <input
               type='text'
               placeholder='Search Product...'
-              value={searchTerm}
               onChange={(e) => handleSearchChange(e)}
               onFocus={handleFocusInputSearch}
               className='h-[40px] w-full px-2 border-[#3957db] border-[2px] rounded-md'
@@ -91,16 +95,18 @@ const Header = ({ activeHeading }) => {
               <AiOutlineSearch size={30} className='absolute right-2 top-1.5 cursor-pointer' />
             )}
             {searchData && searchData.length !== 0 && showSearch ? (
-              <div className='absolute min-h-[30vh] bg-slate-50 shadow-sm-2 z-[9] p-4'>
+              <div className='absolute min-h-[30vh] bg-slate-50 shadow-sm-2 z-[9] p-4 w-full'>
                 {searchData &&
                   searchData.map((i, index) => {
-                    const d = i.name;
-                    const Product_name = d.replace(/\s+/g, '-');
-
                     return (
-                      <Link to={`/product/${Product_name}`} key={index} onClick={() => setShowSearch(false)}>
+                      <Link
+                        to={`/product/${i.slug}`}
+                        key={index}
+                        onClick={() => setShowSearch(false)}
+                        className='w-full'
+                      >
                         <div className='w-full flex items-start py-3'>
-                          <img src={i.image_Url[0].url} alt='' className='w-[40px] h-[40px] mr-[10px]' />
+                          <img src={`${backend_url}/${i.images[0]}`} alt='' className='w-[40px] h-[40px] mr-[10px]' />
                           <h1>{i.name}</h1>
                         </div>
                       </Link>
@@ -156,7 +162,7 @@ const Header = ({ activeHeading }) => {
                bg-[#b3c177] w-4 h-4 top right p-0 m-0 text-white 
                font-mono text-[12px] leading-tight text-center'
               >
-                0
+                {wishItems.length}
               </span>
             </div>
             <div className='relative cursor-pointer mr-[15px]' onClick={() => setOpenCart(true)}>
@@ -166,7 +172,7 @@ const Header = ({ activeHeading }) => {
                bg-[#b3c177] w-4 h-4 top right p-0 m-0 text-white 
                font-mono text-[12px] leading-tight text-center'
               >
-                0
+                {cart.length}
               </span>
             </div>
             <div className='relative cursor-pointer mr-[15px]'>
@@ -184,12 +190,6 @@ const Header = ({ activeHeading }) => {
                 </Link>
               )}
             </div>
-
-            {/* Cart popup */}
-            {openCart && <Cart setOpenCart={setOpenCart} />}
-
-            {/* wishlist popup */}
-            {openWishList && <Wishlist setOpenWishList={setOpenWishList} />}
           </div>
         </div>
       </div>
@@ -205,10 +205,10 @@ const Header = ({ activeHeading }) => {
               alt=''
             />
           </Link>
-          <div className='relative mr-[20px]'>
+          <div className='relative mr-[20px]' onClick={() => setOpenCart(true)}>
             <AiOutlineShoppingCart size={30} />
             <span className='absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 text-white flex items-center justify-center'>
-              1
+              {cart.length}
             </span>
           </div>
         </div>
@@ -220,10 +220,10 @@ const Header = ({ activeHeading }) => {
               {/* Header menu */}
               <div className='w-full justify-between flex pr-3'>
                 <div>
-                  <div className='relative mr-[15px]'>
+                  <div className='relative mr-[15px]' onClick={() => setOpenWishList(true)}>
                     <AiOutlineHeart size={30} className='mt-5 ml-3' />
                     <span className='absolute top-0 right-0 bg-[#3bc177] text-white rounded-full w-4 h-4 flex items-center justify-center'>
-                      0
+                      {wishItems.length}
                     </span>
                   </div>
                 </div>
@@ -289,6 +289,11 @@ const Header = ({ activeHeading }) => {
           </div>
         )}
       </div>
+
+      {/* Cart popup */}
+      {openCart && <Cart setOpenCart={setOpenCart} cart={cart} />}
+      {/* wishlist popup */}
+      {openWishList && <Wishlist setOpenWishList={setOpenWishList} wishItems={wishItems} />}
     </>
   );
 };

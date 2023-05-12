@@ -2,11 +2,15 @@ import React, { useState } from 'react';
 import { RxCross1 } from 'react-icons/rx';
 import styles from 'styles/style';
 import { AiFillHeart, AiOutlineHeart, AiOutlineMessage, AiOutlineShoppingCart } from 'react-icons/ai';
+import { backend_url } from 'api/server';
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import { addToCart } from 'redux/actions/cart';
 
-const ProductDetailCard = ({ setOpen, data }) => {
+const ProductDetailCard = ({ setOpen, data, handleAddToWishList, handleRemoveToWishList, click }) => {
+  const dispatch = useDispatch();
+
   const [count, setCount] = useState(1);
-  const [click, setClick] = useState(false);
-  // const [select, setSelect] = useState(false);
 
   const handleMessageSubmit = () => {};
 
@@ -20,29 +24,50 @@ const ProductDetailCard = ({ setOpen, data }) => {
     setCount(count + 1);
   };
 
+  const addToCartHandle = () => {
+    const cartData = { ...data, qty: count };
+    dispatch(addToCart(cartData));
+    toast.success('Item added to cart successfully!');
+  };
+
   return (
     <div>
       {data ? (
-        <div className='fixed w-full h-screen top-0 left-0 bg-[#00000030] z-40 flex items-center justify-center'>
-          <div className='bg-white w-[90%] 800px:w-[60%] h-[90vh] overflow-y-auto 800px:h-[75vh] rounded-md shadow-sm relative p-4 pt-8'>
+        <div
+          className='fixed w-full h-screen top-0 left-0 bg-[#00000030] z-40 flex items-center justify-center'
+          onClick={() => setOpen(false)}
+        >
+          <div
+            className='bg-white w-[90%] 800px:w-[60%] h-[90vh] overflow-y-auto 800px:h-[75vh] rounded-md shadow-sm relative p-4 pt-8'
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
             {/* Close button */}
             <RxCross1 size={30} onClick={() => setOpen(false)} className='absolute right-3 top-3 z-50' />
 
             <div className='block w-full 800px:flex '>
               {/* Image left side */}
               <div className='w-full 800px:w-[50%]'>
-                <img src={data.image_Url[0].url} alt='' />
+                <img src={`${backend_url}/${data.images[0]}`} alt='' />
                 <div className='flex'>
-                  <img src={data.shop.shop_avatar.url} alt='' className='w-[50px] h-[50px] rounded-full object-fill mr-2' />
+                  <img
+                    src={`${backend_url}/${data.shop.avatar}`}
+                    alt=''
+                    className='w-[50px] h-[50px] rounded-full object-fill mr-2'
+                  />
 
                   <div>
                     <h3 className={`${styles.shop_name}`}>{data.shop.name}</h3>
-                    <h5 className='pb-3 text-[15px]'>({data.shop.ratings}) Ratings</h5>
+                    <h5 className='pb-3 text-[15px]'>({data.shop.ratings}/5) Ratings</h5>
                   </div>
                 </div>
 
                 {/* Button send message */}
-                <div onClick={() => handleMessageSubmit()} className={`${styles.button} bg-[#000] mt-4 rounded-[4px] h-11`}>
+                <div
+                  onClick={() => handleMessageSubmit()}
+                  className={`${styles.button} bg-[#000] mt-4 rounded-[4px] h-11`}
+                >
                   <span className='text-white flex items-center'>
                     Send Message <AiOutlineMessage className='ml-1' />
                   </span>
@@ -59,8 +84,8 @@ const ProductDetailCard = ({ setOpen, data }) => {
 
                 {/* Price */}
                 <div className='flex pt-3'>
-                  <h4 className={`${styles.productDiscountPrice}`}>{data.discount_price}$</h4>
-                  <h3 className={`${styles.price}`}>{data.price ? data.price + '$' : null}</h3>
+                  <h4 className={`${styles.productDiscountPrice}`}>{data.discountPrice}$</h4>
+                  <h3 className={`${styles.price}`}>{data.originalPrice ? data.originalPrice + '$' : null}</h3>
                 </div>
 
                 {/* Quantity and wishlist */}
@@ -75,7 +100,9 @@ const ProductDetailCard = ({ setOpen, data }) => {
                     >
                       -
                     </button>
-                    <span className='bg-gray-200 text-gray-800 text-center px-4 py-2 font-medium inline-block w-[50px]'>{count}</span>
+                    <span className='bg-gray-200 text-gray-800 text-center px-4 py-2 font-medium inline-block w-[50px]'>
+                      {count}
+                    </span>
                     <button
                       className='bg-gradient-to-l from-teal-400 to-teal-500
                        px-4 py-2 rounded-r text-white hover:opacity-75 transition 
@@ -92,18 +119,26 @@ const ProductDetailCard = ({ setOpen, data }) => {
                       <AiFillHeart
                         size={30}
                         className='cursor-pointer'
-                        onClick={() => setClick(!click)}
+                        onClick={() => handleAddToWishList()}
                         color={click ? 'red' : '#333'}
                         title='Remove from wishlist'
                       />
                     ) : (
-                      <AiOutlineHeart size={30} className='cursor-pointer' onClick={() => setClick(!click)} title='Add to wishlist' />
+                      <AiOutlineHeart
+                        size={30}
+                        className='cursor-pointer'
+                        onClick={() => handleRemoveToWishList()}
+                        title='Add to wishlist'
+                      />
                     )}
                   </div>
                 </div>
 
                 {/* Add to card */}
-                <div className={`${styles.button} mt-6 rounded h-11 flex items-center`}>
+                <div
+                  className={`${styles.button} mt-6 rounded h-11 flex items-center`}
+                  onClick={() => addToCartHandle()}
+                >
                   <span className='text-white flex items-center'>
                     Add to card <AiOutlineShoppingCart className='ml-2' size={20} />
                   </span>

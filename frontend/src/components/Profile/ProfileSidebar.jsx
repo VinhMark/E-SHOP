@@ -76,7 +76,7 @@ const ProfileSidebar = ({ active, setActive }) => {
         className={`flex items-center cursor-pointer  w-full mb-8 ${active === 6 && 'text-[red]'}`}
       >
         <AiOutlineCreditCard size={20} />
-        <span className='pl-3 hidden 800px:block'>Payment method</span>
+        <span className='pl-3 hidden 800px:block'>Update Password</span>
       </div>
 
       {/* item menu */}

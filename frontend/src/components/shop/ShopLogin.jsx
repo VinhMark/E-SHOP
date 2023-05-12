@@ -20,7 +20,7 @@ const ShopLogin = () => {
       .then((res) => {
         toast.success(res.data.message);
         Store.dispatch(loadShop());
-        navigate('/');
+        navigate('/dashboard');
       })
       .catch((error) => {
         toast.error(error.response.data.message);

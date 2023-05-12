@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import styles from 'styles/style';
-import { productData } from 'static/data';
 import ProductCard from '../Route/ProductCard/ProductCard';
+import API from 'api';
 
 const SuggestedProduct = ({ data }) => {
   const [products, setProducts] = useState(null);
 
   useEffect(() => {
-    const d = productData && productData.filter((i) => i.category === data.category);
-    setProducts(d);
+    API.get('/product/get-all-products-category/' + data.category).then((res) => {
+      setProducts(res.data.products);
+    });
   }, [data.category]);
 
   return (

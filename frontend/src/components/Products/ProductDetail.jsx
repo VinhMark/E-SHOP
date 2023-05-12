@@ -3,8 +3,14 @@ import styles from 'styles/style';
 import { useNavigate } from 'react-router-dom';
 import { HiOutlineMinus, HiPlus } from 'react-icons/hi';
 import { AiFillHeart, AiOutlineHeart, AiOutlineMessage, AiOutlineShoppingCart } from 'react-icons/ai';
+import { backend_url } from 'api/server';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { addToCart } from 'redux/actions/cart';
 
 const ProductDetail = ({ data }) => {
+  const { cart } = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
   const [select, setSelect] = useState(0);
@@ -12,6 +18,12 @@ const ProductDetail = ({ data }) => {
 
   const handleSubmitMessage = () => {
     navigate('/inbox?conversation=507reqw9ashkjhasdasd');
+  };
+
+  const addToCartHandle = () => {
+      const cartData = { ...data, qty: count };
+      dispatch(addToCart(cartData));
+      toast.success('Item added to cart successfully!');
   };
 
   return (
@@ -22,12 +34,17 @@ const ProductDetail = ({ data }) => {
             <div className='block w-full 800px:flex 800px:gap-5'>
               {/* photo items */}
               <div className='w-full 800px:w-[50%]'>
-                <img src={data.image_Url[select].url} alt='' className='w-[80%] mx-auto' />
+                <img src={`${backend_url}/${data.images[select]}`} alt='' className='w-[80%] mx-auto' />
                 {/* Images */}
                 <div className='w-full flex gap-3'>
-                  {data.image_Url.map((i, index) => (
+                  {data.images.map((i, index) => (
                     <div key={index} className={`${select !== index && 'border-transparent'} border-4 cursor-pointer`}>
-                      <img src={i.url} alt='' className='h-[200px] object-cover' onClick={() => setSelect(index)} />
+                      <img
+                        src={`${backend_url}/${i}`}
+                        alt=''
+                        className='h-[200px] object-cover'
+                        onClick={() => setSelect(index)}
+                      />
                     </div>
                   ))}
                 </div>
@@ -38,8 +55,8 @@ const ProductDetail = ({ data }) => {
                 <h1 className={`${styles.productTitle}`}>{data.name}</h1>
                 <p>{data.description}</p>
                 <div className='flex pt-3'>
-                  <h4 className={styles.productDiscountPrice}>${data.discount_price}</h4>
-                  <h3 className={styles.price}>{data.price ? data.price + '$' : null}</h3>
+                  <h4 className={styles.productDiscountPrice}>${data.discountPrice}</h4>
+                  <h3 className={styles.price}>{data.originalPrice ? data.originalPrice + '$' : null}</h3>
                 </div>
 
                 <div className={`${styles.normalFlex} mt-12 justify-between items-center pr-3`}>
@@ -69,7 +86,10 @@ const ProductDetail = ({ data }) => {
                 </div>
 
                 {/* Button add to cart */}
-                <div className={`${styles.button} mt-6 rounded h-11 flex items-center`}>
+                <div
+                  className={`${styles.button} mt-6 rounded h-11 flex items-center`}
+                  onClick={() => addToCartHandle()}
+                >
                   <span className='text-white flex items-center'>
                     Add to cart <AiOutlineShoppingCart className='ml-1' size={20} />
                   </span>
@@ -78,13 +98,13 @@ const ProductDetail = ({ data }) => {
                 {/* Shop */}
                 <div className='flex items-center pt-8 gap-3'>
                   <img
-                    src={data.shop.shop_avatar.url}
+                    src={`${backend_url}/${data.shop.avatar}`}
                     alt=''
                     className='w-[50px] h-[50px] rounded-full object-center'
                   />
                   <div className='pr-8'>
                     <h3 className={`${styles.shop_name} pb-1 pt-1`}>{data.shop.name}</h3>
-                    <h5 className='pb-3 text-[15px]'>({data.shop.ratings}) Ratings</h5>
+                    <h5 className='pb-3 text-[15px]'>({data.shop.ratings}/5) Ratings</h5>
                   </div>
                   <div className={` ${styles.button} !bg-[#6443d1] mt-4 !rounded !h-11`} onClick={handleSubmitMessage}>
                     <span className='text-white flex items-center'>
@@ -183,10 +203,10 @@ const ProductDetailInfo = ({ data }) => {
           {/* Left content */}
           <div className='w-full 800px:w-[50%]'>
             <div className='flex items-center gap-2'>
-              <img src={data.shop.shop_avatar.url} alt='' className='w-[50px] h-[50px] rounded-full' />
+              <img src={`${backend_url}/${data.shop.avatar}`} alt='' className='w-[50px] h-[50px] rounded-full' />
               <div>
                 <h3 className={`${styles.shop_name} pb-0`}>{data.shop.name}</h3>
-                <h5 className='pb-2 text-[15px]'>({data.shop.ratings}) Ratings</h5>
+                <h5 className='pb-2 text-[15px]'>({data.shop.ratings}/5) Ratings</h5>
               </div>
             </div>
             <p className='pt-2'>

@@ -35,6 +35,8 @@ const shopSchema = new mongoose.Schema({
   },
   resetPasswordToken: String,
   resetPasswordTime: Number,
+  
+  references: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
 });
 
 // Hash password

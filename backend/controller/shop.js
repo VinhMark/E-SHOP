@@ -1,5 +1,5 @@
 const express = require('express');
-const route = express.Router();
+const router = express.Router();
 const ErrorHandler = require('../utils/ErrorHandler');
 const multer = require('../multer');
 const Shop = require('../model/shop');
@@ -13,7 +13,7 @@ const sendToken = require('../utils/jwtToken');
 const { isSeller } = require('../middleware/auth');
 
 // url: '/shop/create-shop' Api create new shop
-route.post('/create-shop', multer.single('file'), async (req, res, next) => {
+router.post('/create-shop', multer.single('file'), async (req, res, next) => {
   try {
     const { email } = req.body;
     const sellerEmail = await Shop.findOne({ email });
@@ -59,7 +59,7 @@ const createActivationToken = (seller) => {
 };
 
 // Activate shop
-route.post(
+router.post(
   '/activation',
   catchAsyncErrors(async (req, res, next) => {
     let img = '';
@@ -90,7 +90,7 @@ route.post(
 );
 
 // Login shop
-route.post(
+router.post(
   '/shop-login',
   catchAsyncErrors(async (req, res, next) => {
     try {
@@ -110,7 +110,7 @@ route.post(
       }
 
       shop.password = '';
-      sendToken(shop, 201, res);
+      sendToken(shop, 201, res, 'shop');
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
@@ -118,7 +118,7 @@ route.post(
 );
 
 // Get data shop login
-route.get(
+router.get(
   '/getShop',
   isSeller,
   catchAsyncErrors((req, res, next) => {
@@ -129,4 +129,38 @@ route.get(
   })
 );
 
-module.exports = route;
+// Logout shop
+router.get(
+  '/logout',
+  catchAsyncErrors((req, res, next) => {
+    try {
+      res.clearCookie('token-shop');
+
+      return res.status(201).json({
+        success: true,
+        message: 'Logout successfully!',
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// Get shop info
+router.get(
+  '/get-shop-info/:id',
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const shop = await Shop.findById(req.params.id);
+
+      return res.status(201).json({
+        success: true,
+        shop,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+module.exports = router;

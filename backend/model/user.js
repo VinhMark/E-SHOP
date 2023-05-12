@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -18,9 +17,14 @@ const userSchema = new mongoose.Schema({
     minLength: [6, 'Password should be greater than 6 characters!'],
     select: false,
   },
-  address: String,
+  addresses: [
+    { country: String, city: String, address1: String, address2: String, zipCode: Number, addressType: String },
+  ],
+  phone: {
+    type: Number,
+  },
   role: {
-    type: 'String',
+    type: String,
     default: 'user',
   },
   avatar: {
