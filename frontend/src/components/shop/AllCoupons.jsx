@@ -154,11 +154,11 @@ const CreatePopup = ({ coupon, setCoupon, handleSubmit, products }) => {
   const [hasError, setHasError] = useState(false);
 
   const handleChangeInput = (e) => {
+    console.log(e.target.value);
     const name = e.target.name;
     const value = e.target.value;
     if (e.target.hasAttribute('required')) {
       validate(e);
-      return;
     }
 
     setCoupon((prev) => ({ ...prev, [name]: value }));
@@ -167,7 +167,6 @@ const CreatePopup = ({ coupon, setCoupon, handleSubmit, products }) => {
   const validate = (e) => {
     const name = e.target.name;
     const value = e.target.value.trim();
-    console.log(e.target.hasAttribute('required'));
     // Check item empty
     if (value === '') {
       setError((prev) => ({ ...prev, [name]: value === '' ? 'Please enter your coupon ' + name : '' }));

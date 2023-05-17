@@ -9,7 +9,6 @@ import { toast } from 'react-toastify';
 import { addToCart } from 'redux/actions/cart';
 
 const ProductDetail = ({ data }) => {
-  const { cart } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);

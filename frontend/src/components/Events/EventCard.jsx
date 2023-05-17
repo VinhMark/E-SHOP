@@ -1,7 +1,29 @@
 import styles from 'styles/style';
 import CountDown from './CountDown';
+import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { addToCart } from 'redux/actions/cart';
 
 const EventCard = ({ active, data }) => {
+  const { cart } = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
+
+  const handleAddToCart = () => {
+    const itemExists = cart.length > cart.find((i) => i._id === data._id);
+    if (itemExists) {
+      toast.warning('Item already in cart!');
+    } else {
+      if (data.stock < 1) {
+        toast.error('Product stock limit!');
+      } else {
+        const cartData = { ...data, qty: 1 };
+        dispatch(addToCart(cartData));
+        toast.success('Item added to cart successfully!');
+      }
+    }
+  };
+
   return (
     <div className={`w-full block bg-white rounded-lg ${active ? 'unset' : 'mb-12'} lg:flex p-2`}>
       {/* side left */}
@@ -24,6 +46,15 @@ const EventCard = ({ active, data }) => {
           <span className='pr-3 font-[500] text-[17px] text-[#44a55e]'>{data.sold_out} (Sold)</span>
         </div>
         <CountDown endDate={data.endDate} />
+        <br />
+        <div className='flex gap-5'>
+          <Link className={`${styles.button} text-white`} to={`/product/${data.slug}?isEvent=true`}>
+            See Details
+          </Link>
+          <div className={`${styles.button} text-white`} onClick={() => handleAddToCart()}>
+            Add to cart
+          </div>
+        </div>
       </div>
     </div>
   );

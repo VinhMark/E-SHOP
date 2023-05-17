@@ -1,13 +1,11 @@
 import API from 'api';
-import SelectInput from 'components/Form/SelectInput';
-import { Country, State } from 'country-state-city';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import styles from 'styles/style';
 import CartData from './CartData';
 import ShippingInfo from './ShippingInfo';
+import styles from 'styles/style';
 
 const Checkout = () => {
   const { user } = useSelector((state) => state.user);
@@ -24,13 +22,43 @@ const Checkout = () => {
 
   const [couponCode, setCouponCode] = useState('');
   const [couponData, setCouponData] = useState(null);
+  const [discountPrice, setDiscountPrice] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const paymentSubmit = (e) => {
-    e.preventDefault();
+  const paymentSubmit = () => {
+    if (
+      address.address1 === '' ||
+      address.address2 === '' ||
+      !address.zipCode ||
+      address.country === '' ||
+      address.city === ''
+    ) {
+      toast.error('Please choose your delivery address!');
+      return;
+    }
+    const shippingAddress = {
+      ...address,
+      country: address.country.isoCode,
+      city: address.city.isoCode,
+    };
+
+    const orderData = {
+      cart,
+      totalPrice,
+      subTotalPrice,
+      shipping,
+      discountPrice,
+      couponData,
+      shippingAddress,
+      user,
+    };
+
+    // update local storage with the updated order array
+    localStorage.setItem('latestOrder', JSON.stringify(orderData));
+    navigate('/payment');
   };
 
   const subTotalPrice = cart.reduce((acc, item) => {
@@ -43,24 +71,30 @@ const Checkout = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const name = couponCode;
-    const { data } = API.get('/coupon/get-coupon-value/' + name).then((res) => {
+    API.get('/coupon/get-coupon-value/' + name).then((res) => {
       if (!res.data.couponCode) {
         toast.warning("Coupon code does'nt exists!");
         return setCouponCode('');
       }
       const shopId = res.data.couponCode.shopId;
+      const couponCodeValue = res.data.couponCode.value;
       const isCouponValid = cart.length > 0 && cart.filter((item) => item.shopId === shopId);
       if (isCouponValid.length === 0) {
         toast.warning('Coupon code is not valid for this shop!');
         return setCouponCode('');
       }
+
+      const eligibleProducts = isCouponValid.reduce((acc, item) => acc + item.qty * item.discountPrice, 0);
+      const discountPrice = (eligibleProducts * couponCodeValue) / 100;
+      setDiscountPrice(discountPrice);
+      setCouponData(res.data.couponCode);
     });
   };
 
   const discountPercentage = couponData ? (subTotalPrice * couponData.value) / 100 : '';
 
   const totalPrice = couponData
-    ? (subTotalPrice + shipping - couponData.value).toFixed(2)
+    ? (subTotalPrice + shipping - discountPercentage).toFixed(2)
     : (subTotalPrice + shipping).toFixed(2);
 
   return (
@@ -81,6 +115,10 @@ const Checkout = () => {
             setCouponCode={setCouponCode}
           />
         </div>
+      </div>
+
+      <div className={`${styles.button} w-[150px] 800px:w-[280px] mt-10`} onClick={() => paymentSubmit()}>
+        <h5 className='text-white'>Go to payment</h5>
       </div>
     </div>
   );

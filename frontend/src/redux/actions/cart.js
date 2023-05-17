@@ -28,7 +28,6 @@ export const incrementQty = (data) => async (dispatch, getState) => {
     payload: data,
   });
 
-  console.log("adsadasdasdasdasdasd")
   localStorage.setItem('cartItems', JSON.stringify(getState().cart.cart));
   return data;
 };

@@ -14,6 +14,7 @@ import { backend_url } from 'api/server';
 import { addToWishList, removeToWishList } from 'redux/actions/favorite';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import { addToCart } from 'redux/actions/cart';
 
 const ProductCard = ({ data }) => {
   const dispatch = useDispatch();
@@ -29,6 +30,12 @@ const ProductCard = ({ data }) => {
   const handleRemoveToWishList = () => {
     setClick(false);
     dispatch(removeToWishList(data._id));
+  };
+
+  const handleAddToCart = () => {
+    const cartData = { ...data, qty: 1 };
+    dispatch(addToCart(cartData));
+    toast.success('Item added to cart successfully!');
   };
 
   useEffect(() => {
@@ -106,6 +113,7 @@ const ProductCard = ({ data }) => {
           color='#444'
           title='Add to card'
           className='cursor-pointer absolute right-2 top-24'
+          onClick={() => handleAddToCart()}
         />
 
         {open ? (

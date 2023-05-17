@@ -8,6 +8,7 @@ const addCart = createAction('AddCart');
 const removeFromCart = createAction('RemoveFromCart');
 const incrementQty = createAction('IncrementQty');
 const decrementQty = createAction('DecrementQty');
+const clearCart = createAction('ClearCart');
 
 export const cartReducer = createReducer(initialState, (builder) => {
   builder
@@ -41,5 +42,8 @@ export const cartReducer = createReducer(initialState, (builder) => {
       const index = newState.cart.findIndex((i) => i._id === action.payload);
       newState.cart[index].qty -= 1;
       return state;
+    })
+    .addCase(clearCart, (state) => {
+      state.cart = [];
     });
 });

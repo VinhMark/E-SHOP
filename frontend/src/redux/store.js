@@ -5,6 +5,7 @@ import { commonReducer } from './reducers/common';
 import { productReducer } from './reducers/product';
 import { cartReducer } from './reducers/cart';
 import { favoriteReducer } from './reducers/favorite';
+import { orderReducer } from './reducers/order';
 
 const Store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const Store = configureStore({
     product: productReducer,
     cart: cartReducer,
     wish: favoriteReducer,
+    order: orderReducer,
   },
 });
 

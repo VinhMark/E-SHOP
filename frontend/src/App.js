@@ -1,27 +1,28 @@
 import './App.css';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ActivationPage, BestSellingPage, ProductDetailPage, ProfilePage } from './routes/UserRoutes';
 import {
-  ActivationPage,
-  BestSellingPage,
+  CheckoutPage,
   EventsPage,
   FAQPage,
   HomePage,
   LoginPage,
-  ProductDetailPage,
-  ProductsPage,
+  PaymentPage,
   SignUpPage,
-  ProfilePage,
-  CheckoutPage,
-} from './routes/UserRoutes';
+  ProductsPage,
+  OrderSuccessPage,
+  EventDetailPage,
+} from './routes/Routers';
 
 import {
   SellerActivationPage,
   ShopAllCouponPage,
   ShopAllEventsPage,
+  ShopAllOrdersPage,
   ShopAllProducts,
   ShopCreateEventPage,
   ShopCreatePage,
@@ -37,6 +38,9 @@ import { loadShop } from 'redux/actions/shop';
 import SellerProtectedRoute from 'routes/SellerProtectedRoute';
 import { useSelector } from 'react-redux';
 import Loader from 'components/shop/Layout/Loader';
+import API from 'api';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 
 const getCookie = (name) => {
   var cookies = document.cookie.split(';');
@@ -55,7 +59,12 @@ const getCookie = (name) => {
 
 const App = () => {
   const { isStart, isLoading } = useSelector((state) => state.common);
-  console.log(isStart, isLoading);
+  const [stripeApiKey, setStripeApiKey] = useState('');
+
+  async function getStripeApiKey() {
+    const { data } = await API.get('/payment/stripeApiKey');
+    setStripeApiKey(data.stripeApiKey);
+  }
 
   useEffect(() => {
     const tokenUser = getCookie('token-user');
@@ -66,6 +75,7 @@ const App = () => {
     if (!tokenUser || tokenShop) {
       Store.dispatch({ type: 'StartApp' });
     }
+    getStripeApiKey();
   }, []);
 
   if (isLoading || !isStart) {
@@ -74,6 +84,13 @@ const App = () => {
 
   return (
     <BrowserRouter>
+      {stripeApiKey && (
+        <Elements stripe={loadStripe(stripeApiKey)}>
+          <Routes>
+            <Route path='/payment' element={<PaymentPage />} />
+          </Routes>
+        </Elements>
+      )}
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/login' element={<LoginPage />} />
@@ -81,10 +98,12 @@ const App = () => {
         <Route path='/activation/:activation_token' element={<ActivationPage />} />
         <Route path='/products' element={<ProductsPage />} />
         <Route path='/product/:slug' element={<ProductDetailPage />} />
+        <Route path='/event/:slug' element={<EventDetailPage />} />
         <Route path='/best-selling' element={<BestSellingPage />} />
         <Route path='/events' element={<EventsPage />} />
         <Route path='/faq' element={<FAQPage />} />
         <Route path='/checkout' element={<CheckoutPage />} />
+        <Route path='/order/success' element={<OrderSuccessPage />} />
         <Route
           path='/profile'
           element={
@@ -149,6 +168,14 @@ const App = () => {
           element={
             <SellerProtectedRoute>
               <ShopAllCouponPage />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path='/dashboard-orders'
+          element={
+            <SellerProtectedRoute>
+              <ShopAllOrdersPage />
             </SellerProtectedRoute>
           }
         />

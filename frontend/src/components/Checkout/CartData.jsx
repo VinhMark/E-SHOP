@@ -23,7 +23,9 @@ const CartData = ({
       </div>
       <div className='flex justify-between my-3'>
         <h3 className='text-[16px] font-[400] text-[#000000a4]'>Discount:</h3>
-        <h5 className='text-[18px] font-[600]'>{discountPercentage ? '$' + discountPercentage.toString() : '-'}</h5>
+        <h5 className='text-[18px] font-[600] text-[red]'>
+          {discountPercentage ? '- $' + discountPercentage.toString() : '-'}
+        </h5>
       </div>
       <hr />
       <h5 className='text-[18px] font-[600] text-end mt-3'>${totalPrice}</h5>

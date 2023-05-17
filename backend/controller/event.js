@@ -95,4 +95,19 @@ router.delete(
   })
 );
 
+router.get(
+  '/get-event-by-slug/:slug',
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const event = await Event.findOne({ slug: req.params.slug });
+      return res.status(200).json({
+        success: true,
+        event,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
 module.exports = router;

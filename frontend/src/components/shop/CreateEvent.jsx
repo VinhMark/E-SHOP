@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { categoriesData } from 'static/data';
 
 const initialEvent = {
-  image: '',
+  images: [],
   name: '',
   description: '',
   category: '',
@@ -234,16 +234,27 @@ const CreateEvent = () => {
           </label>
           <input type='file' name='image' id='image' className='hidden' onChange={handleChangeInput} />
           <div className='flex flex-wrap'>
-            {product.image ? (
-              <div className='mt-2  relative border-[#555] border-[3px] rounded-md outline-none h-[120px] w-[120px]'>
-                <img src={URL.createObjectURL(product.image)} className='w-full object-cover m-2' alt='' />
-                <RxCross1
-                  className='absolute top-1 right-1 cursor-pointer'
-                  size={20}
-                  color='red'
-                  onClick={() => handleRemoveImg()}
-                />
-              </div>
+            {product.images.length > 0 ? (
+              product.images.map((item, i) => (
+                <div
+                  className='mt-2  relative border-[#555] border-[3px] rounded-md outline-none h-[120px] w-[120px]'
+                  key={i}
+                >
+                  <img src={URL.createObjectURL(item)} className='w-full object-cover m-2' alt='' />
+                  <RxCross1
+                    className='absolute top-1 right-1 cursor-pointer'
+                    size={20}
+                    color='red'
+                    onClick={() => handleRemoveImg(i)}
+                  />
+                  <RxCross1
+                    className='absolute top-1 right-1 cursor-pointer'
+                    size={20}
+                    color='red'
+                    onClick={() => handleRemoveImg()}
+                  />
+                </div>
+              ))
             ) : (
               <label
                 htmlFor='image'
