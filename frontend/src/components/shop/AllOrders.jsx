@@ -56,7 +56,7 @@ const AllOrders = () => {
       renderCell: (params) => {
         return (
           <>
-            <Link to={`/order/${params.id}`}>
+            <Link to={`/shop/order/${params.id}`}>
               <Button>
                 <AiOutlineArrowRight size={20} />
               </Button>
@@ -84,7 +84,7 @@ const AllOrders = () => {
       {loading ? (
         <Loader />
       ) : (
-        <div className='w-full mx-8 pt-1 mt-10 bg-white'>
+        <div className='w-full bg-white'>
           <DataGrid rows={rows} columns={columns} pageSize={10} disableSelectionOnClick autoHeight />
         </div>
       )}

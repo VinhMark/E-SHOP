@@ -76,8 +76,8 @@ const AllProducts = () => {
     },
     {
       field: 'delete',
-      flex: 0.8,
-      minWidth: 120,
+      flex: 0.7,
+      minWidth: 100,
       headerName: 'Delete',
       sortable: false,
       renderCell: (params) => {
@@ -111,7 +111,7 @@ const AllProducts = () => {
       {loading ? (
         <Loader />
       ) : (
-        <div className='w-full  bg-white'>
+        <div className='w-full bg-white'>
           <DataGrid
             rows={row}
             columns={columns}

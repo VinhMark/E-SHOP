@@ -23,7 +23,7 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className='w-full px-5'>
+    <div className='w-full'>
       <div className='flex w-full items-center justify-center'>
         <h1 className='text-[25px] font-[600] text-[#000000ba] pb-2'>Change Password</h1>
       </div>

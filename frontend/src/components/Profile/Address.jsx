@@ -67,7 +67,7 @@ const Address = () => {
   };
 
   return (
-    <div className='w-full px-5'>
+    <div className='w-full'>
       {/* popup create address */}
       {open && (
         <div className='fixed w-full h-screen bg-[#0000004b] top-0 left-0 flex items-center justify-center'>
@@ -224,8 +224,8 @@ const Address = () => {
             <div className='pl-8 flex flex-col'>
               <h5 className='text-sm font-bold'>Address</h5>
               <h6 className='text-[12px] 800px:text-[unset]'>
-                <p>{item.address1}</p>
-                <p>{item.address2}</p>
+                <p className=' line-clamp-1'>{item.address1}</p>
+                <p className=' line-clamp-1'>{item.address2}</p>
               </h6>
             </div>
             <div className='pl-8 flex items-center justify-between'>

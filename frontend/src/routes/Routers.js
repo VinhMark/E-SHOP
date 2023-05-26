@@ -8,6 +8,8 @@ import PaymentPage from '../pages/PaymentPage';
 import ProductsPage from '../pages/ProductsPage';
 import OrderSuccessPage from '../pages/OrderSuccessPage';
 import EventDetailPage from '../pages/EventDetailPage';
+import OrderDetailsPage from '../pages/OrderDetailsPage';
+import TrackOrderPage from '../pages/TrackOrderPage';
 
 export {
   LoginPage,
@@ -20,4 +22,6 @@ export {
   PaymentPage,
   ProductsPage,
   EventDetailPage,
+  OrderDetailsPage,
+  TrackOrderPage,
 };

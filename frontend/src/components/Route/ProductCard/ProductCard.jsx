@@ -15,8 +15,9 @@ import { addToWishList, removeToWishList } from 'redux/actions/favorite';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { addToCart } from 'redux/actions/cart';
+import Ratings from 'components/Products/Ratings';
 
-const ProductCard = ({ data }) => {
+const ProductCard = ({ data, isEvent }) => {
   const dispatch = useDispatch();
   const { wishItems } = useSelector((state) => state.wish);
   const [click, setClick] = useState(false);
@@ -46,9 +47,9 @@ const ProductCard = ({ data }) => {
   }, [data._id, wishItems]);
 
   return (
-    <div className='w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer'>
+    <div className='w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative'>
       <div className='flex justify-end'></div>
-      <Link to={`/product/${data.slug}`}>
+      <Link to={`/product/${data.slug}${isEvent ? '?isEvent=true' : ''}`}>
         <img src={`${backend_url}/${data.images[0]}`} alt='' className='w-full h-[170px] object-contain' />
       </Link>
       <Link to={`/shop/${data.shop._id}`}>
@@ -57,12 +58,9 @@ const ProductCard = ({ data }) => {
       <Link to={`/product/${data.slug}`}>
         <h4 className='mb-3 font-[500] line-clamp-2 '>{data.name}</h4>
 
-        <div className='flex'>
-          <AiFillStar size={20} className='mr-2 cursor-pointer' color='#f6ba00' />
-          <AiFillStar size={20} className='mr-2 cursor-pointer' color='#f6ba00' />
-          <AiFillStar size={20} className='mr-2 cursor-pointer' color='#f6ba00' />
-          <AiFillStar size={20} className='mr-2 cursor-pointer' color='#f6ba00' />
-          <AiOutlineStar size={20} className='mr-2 cursor-pointer' color='#f6ba00' />
+        <div className='flex items-center'>
+          <Ratings ratings={data.ratings} />
+          {data.reviews && <span>({data.reviews.length})</span>}
         </div>
 
         {/* Price and discount total sell */}
@@ -76,7 +74,7 @@ const ProductCard = ({ data }) => {
           </div>
           {/* total sell */}
           <span className='font-[500] text-[17px] text-[#68d284]'>
-            {data.sold_out ? data.sold_out + ' sold' : null}
+            {data.sold_out ? data.sold_out + ' (sold)' : null}
           </span>
         </div>
       </Link>

@@ -268,7 +268,7 @@ router.put(
       const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
 
       if (!isPasswordMatched) {
-        return next(new ErrorHandler('Old password is incorrect!', 400))
+        return next(new ErrorHandler('Old password is incorrect!', 400));
       }
 
       user.password = req.body.newPassword;
@@ -277,8 +277,24 @@ router.put(
 
       return res.status(201).json({
         success: true,
-        message: 'Password update successfully!'
-      })
+        message: 'Password update successfully!',
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// Get userInfo
+router.get(
+  '/user-info/:id',
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const user = await userModel.findById(req.params.id);
+      return res.status(200).json({
+        success: true,
+        user,
+      });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }

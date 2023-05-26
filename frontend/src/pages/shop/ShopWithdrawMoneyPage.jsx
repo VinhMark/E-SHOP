@@ -1,23 +1,21 @@
-import AllCoupons from 'components/shop/AllCoupons';
 import DashBoardHeader from 'components/shop/Layout/DashBoardHeader';
 import DashboardSidebar from 'components/shop/Layout/DashboardSidebar';
-import React from 'react';
+import ShopWithdrawMoney from 'components/shop/ShopWithdrawMoney';
 
-const ShopAllCouponPage = () => {
+const ShopWithdrawMoneyPage = () => {
   return (
     <div>
       <DashBoardHeader />
       <div className='flex justify-between w-full'>
         <div className='w-[80px] 800px:w-[330px]'>
-          <DashboardSidebar active={8} />
+          <DashboardSidebar active={7} />
         </div>
-
-        <div className='w-full'>
-          <AllCoupons />
+        <div className='w-full justify-center flex'>
+          <ShopWithdrawMoney />
         </div>
       </div>
     </div>
   );
 };
 
-export default ShopAllCouponPage;
+export default ShopWithdrawMoneyPage;

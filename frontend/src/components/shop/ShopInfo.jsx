@@ -1,20 +1,25 @@
 import API from 'api';
 import { backend_url } from 'api/server';
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Store from 'redux/store';
 import styles from 'styles/style';
 import Loader from './Layout/Loader';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllProductsShop } from 'redux/actions/product';
 
 const ShopInfo = ({ isOwner }) => {
   const navigate = useNavigate();
+  const { products } = useSelector((state) => state.product);
   const [shop, setShop] = useState();
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setLoading(true);
+    dispatch(getAllProductsShop(id));
     API.get('/shop/get-shop-info/' + id)
       .then((res) => {
         setLoading(false);
@@ -24,7 +29,7 @@ const ShopInfo = ({ isOwner }) => {
         setLoading(false);
         console.log(err);
       });
-  }, [id]);
+  }, [id, dispatch]);
 
   const handleLogout = () => {
     API.get('/shop/logout', { withCredentials: true })
@@ -35,6 +40,13 @@ const ShopInfo = ({ isOwner }) => {
       })
       .catch((err) => toast.error(err.response.data));
   };
+
+  // Calculate rating of shop
+  const totalReviewLength = products && products.reduce((acc, item) => acc + item.reviews.length, 0);
+  const totalRatings =
+    products && products.reduce((acc, item) => acc + item.reviews.reduce((sum, review) => sum + review.rating, 0), 0);
+
+  const avgRating = totalRatings / totalReviewLength || 0;
 
   return (
     <>
@@ -63,21 +75,21 @@ const ShopInfo = ({ isOwner }) => {
           </div>
           <div className='p-3'>
             <h5 className='font-[600]'>Total Products:</h5>
-            <h4 className='text-[#000000a6]'>10</h4>
+            <h4 className='text-[#000000a6]'>{products && products.length}</h4>
           </div>
           <div className='p-3'>
             <h5 className='font-[600]'>Shop Ratings:</h5>
-            <h4 className='text-[#000000a6]'>4/5</h4>
+            <h4 className='text-[#000000a6]'>{avgRating}/5</h4>
           </div>
           <div className='p-3'>
             <h5 className='font-[600]'>Join On:</h5>
-            <h4 className='text-[#000000a6]'>{shop.createdAt.slice(0, 10)}</h4>
+            <h4 className='text-[#000000a6]'>{new Date(shop.createdAt).toLocaleString()}</h4>
           </div>
           {isOwner && (
             <div className='py-2 px-4'>
-              <div className={`${styles.button} !w-full !h-[42] !rounded-[5px]`}>
+              <Link to='/settings' className={`${styles.button} !w-full !h-[42] !rounded-[5px]`}>
                 <span className='text-white'>Edit shop</span>
-              </div>
+              </Link>
               <div className={`${styles.button} !w-full !h-[42] !rounded-[5px]`} onClick={() => handleLogout()}>
                 <span className='text-white'>Log Out</span>
               </div>

@@ -18,6 +18,7 @@ import API from 'api';
 const Header = ({ activeHeading }) => {
   const { wishItems } = useSelector((state) => state.wish);
   const { cart } = useSelector((state) => state.cart);
+  const { isSeller } = useSelector((state) => state.shop);
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchData, setSearchData] = useState(null);
@@ -60,7 +61,6 @@ const Header = ({ activeHeading }) => {
   };
 
   const handleCloseSearch = () => {
-    console.log('remove');
     setShowSearch(false);
     setSearchTerm('');
     setSearchData(null);
@@ -69,8 +69,8 @@ const Header = ({ activeHeading }) => {
   return (
     <>
       {/* Nav-top */}
-      <div className={`${styles.section}`}>
-        <div className='hidden 800px:h-[50px] 800px:my-[20px] 800px:flex items-center justify-between'>
+      <div className={`${styles.section} ${active ? 'my-[45px]' : 'my-[20px]'}`}>
+        <div className='hidden 800px:h-[50px] 800px:flex items-center justify-between'>
           <div>
             <Link to='/'>
               <img src='https://shopo.quomodothemes.website/assets/images/logo.svg' alt='' />
@@ -118,9 +118,9 @@ const Header = ({ activeHeading }) => {
 
           {/* button right */}
           <div className={`${styles.button}`}>
-            <Link to='/shop-create'>
+            <Link to={isSeller ? '/shop' : '/shop-create'}>
               <h1 className='text-white flex items-center'>
-                Become Seller <IoIosArrowForward />
+                {isSeller ? 'Go to dashboard' : 'Become Seller'} <IoIosArrowForward />
               </h1>
             </Link>
           </div>
@@ -177,7 +177,7 @@ const Header = ({ activeHeading }) => {
             </div>
             <div className='relative cursor-pointer mr-[15px]'>
               {isAuthenticated ? (
-                <Link to='/profile'>
+                <Link to='/user'>
                   <img
                     src={`${backend_url}${user.avatar}`}
                     alt=''
@@ -195,7 +195,7 @@ const Header = ({ activeHeading }) => {
       </div>
 
       {/* mobile header */}
-      <div className='w-full h-[70px] fixed bg-white z-50 top-0 left-0 shadow-sm 800px:hidden'>
+      <div className={`w-full h-[70px] fixed bg-white z-50 top-0 left-0 shadow-sm 800px:hidden`}>
         <div className='w-full flex items-center justify-between'>
           <BiMenuAltLeft size={40} className='ml-4' onClick={() => setOpen(!open)} />
           <Link to='/'>
@@ -269,7 +269,7 @@ const Header = ({ activeHeading }) => {
               {/* button login */}
               <div className='flex w-full justify-center text-[18px] text-[#000000b7] mt-12'>
                 {isAuthenticated ? (
-                  <Link to='/profile'>
+                  <Link to='/user'>
                     <img
                       src={`${backend_url}${user.avatar}`}
                       alt=''

@@ -11,6 +11,7 @@ const sendShopToken = require('../utils/shopToken');
 const path = require('path');
 const sendToken = require('../utils/jwtToken');
 const { isSeller } = require('../middleware/auth');
+const Product = require('../model/product');
 
 // url: '/shop/create-shop' Api create new shop
 router.post('/create-shop', multer.single('file'), async (req, res, next) => {
@@ -157,6 +158,57 @@ router.get(
         success: true,
         shop,
       });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// update shop avatar
+router.put(
+  '/update-shop-avatar',
+  isSeller,
+  multer.single('image'),
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const id = req.shop._id;
+      removeImg(req.shop.avatar);
+      const fileUrl = path.join(req.file.filename);
+      const shop = await Shop.findByIdAndUpdate(req.shop._id, { avatar: fileUrl }, { returnDocument: 'after' });
+
+      // update product
+      await Product.updateMany({ shopId: req.shop._id }, { $set: { shop: shop } });
+
+      return res.status(201).json({
+        success: true,
+        shop,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// Update info shop
+router.put(
+  '/update-shop-info',
+  isSeller,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { name, description, phone, zip, address } = req.body;
+      const shop = await Shop.findOne({ email: req.shop.email });
+      if (!shop) {
+        return next(new ErrorHandler('User not found!', 400));
+      }
+
+      shop.name = name;
+      shop.description = description;
+      shop.phone = phone;
+      shop.zip = zip;
+      shop.address = address;
+      await shop.save();
+
+      return res.status(201).json({ success: true, shop });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }

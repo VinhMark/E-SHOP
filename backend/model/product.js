@@ -36,7 +36,7 @@ const productSchema = new mongoose.Schema({
   },
   shop: {
     type: Object,
-    requiredd: true,
+    required: true,
   },
   sold_out: {
     type: Number,
@@ -46,9 +46,22 @@ const productSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
+  reviews: [
+    {
+      user: { type: Object },
+      rating: { type: Number },
+      comment: { type: String },
+      productId: { type: String },
+      createdAt: {
+        type: Date,
+        default: Date.now(),
+      },
+    },
+  ],
+  ratings: { type: Number },
   shopId: {
     type: String,
-    requiredd: true,
+    required: true,
   },
   slug: { type: String, slug: 'name', unique: true },
 });

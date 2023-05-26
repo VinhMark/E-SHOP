@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from 'styles/style';
 import { useNavigate } from 'react-router-dom';
 import { HiOutlineMinus, HiPlus } from 'react-icons/hi';
@@ -7,26 +7,67 @@ import { backend_url } from 'api/server';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { addToCart } from 'redux/actions/cart';
+import Ratings from './Ratings';
+import { getAllProductsShop } from 'redux/actions/product';
+import Loader from 'components/shop/Layout/Loader';
+import API from 'api';
 
-const ProductDetail = ({ data }) => {
+const ProductDetail = ({ data, loading }) => {
+  const { products } = useSelector((state) => state.product);
+  const { user, isAuthenticated } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
   const [select, setSelect] = useState(0);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (data) {
+      dispatch(getAllProductsShop(data.shopId));
+    }
+  }, [dispatch, data]);
+
   const handleSubmitMessage = () => {
-    navigate('/inbox?conversation=507reqw9ashkjhasdasd');
+    if (isAuthenticated) {
+      const groupTitle = data._id + '-' + user._id;
+      const sellerId = data.shopId;
+      const userId = user._id;
+
+      API.post('/conversation/create-conversation', { sellerId, userId, groupTitle }, { withCredentials: true })
+        .then((res) => {
+          navigate('/conversation/' + res.data.conversation._id);
+        })
+        .catch((err) => toast.error(err.response.data.message));
+    } else {
+      toast.warning('Please login to create a conversation!');
+    }
   };
 
   const addToCartHandle = () => {
-      const cartData = { ...data, qty: count };
-      dispatch(addToCart(cartData));
-      toast.success('Item added to cart successfully!');
+    const cartData = { ...data, qty: count };
+    dispatch(addToCart(cartData));
+    toast.success('Item added to cart successfully!');
   };
 
+  if (loading) {
+    return <Loader />;
+  }
+  if (data) {
+    const totalReviewsLength =
+      products &&
+      products.reduce((value, current) => {
+        return value + current.reviews.length;
+      }, 0);
+    const totalRatings =
+      products &&
+      products.reduce((value, current) => {
+        return value + (current.ratings || 0);
+      }, 0);
+    data.shop.ratings = (totalRatings / totalReviewsLength).toFixed(1) || 0;
+  }
+
   return (
-    <div className='bg-white'>
+    <div className='bg-white pb-6'>
       {data && (
         <div className={`unset ${styles.section} w-[90%] 800px:w-[80%]`}>
           <div className='w-full py-5'>
@@ -126,10 +167,10 @@ const ProductDetailInfo = ({ data }) => {
   const [active, setActive] = useState(1);
 
   return (
-    <div className='bg-[#f5f6fb] px-3 800px:px-10 py-2 rounded'>
+    <div className='bg-[#f5f6fb] px-3 800px:px-10 py-10 rounded'>
       {/* Tabs */}
-      <div className='w-full flex justify-around border-b pt-10 pb-2'>
-        <div className='relative'>
+      <div className='w-full flex justify-around border-b pb-2'>
+        <div className='relative p-1'>
           <h5
             className='text-[#000] text-[18px] px-1 leading-5 font-[600] cursor-pointer 800px:text-[20px]'
             onClick={() => setActive(1)}
@@ -138,7 +179,7 @@ const ProductDetailInfo = ({ data }) => {
           </h5>
           {active === 1 && <div className={`${styles.active_indicator}`}></div>}
         </div>
-        <div className='relative'>
+        <div className='relative p-1'>
           <h5
             className='text-[#000] text-[18px] px-1 leading-5 font-[600] cursor-pointer 800px:text-[20px]'
             onClick={() => setActive(2)}
@@ -147,7 +188,7 @@ const ProductDetailInfo = ({ data }) => {
           </h5>
           {active === 2 && <div className={`${styles.active_indicator}`}></div>}
         </div>
-        <div className='relative'>
+        <div className='relative p-1'>
           <h5
             className='text-[#000] text-[18px] px-1 leading-5 font-[600] cursor-pointer 800px:text-[20px]'
             onClick={() => setActive(3)}
@@ -192,8 +233,40 @@ const ProductDetailInfo = ({ data }) => {
       )}
 
       {active === 2 && (
-        <div className='w-full justify-center min-h-[40vh] flex items-center'>
-          <p>No reviews yet!</p>
+        <div className='w-full justify-center min-h-[200px] flex mt-5 flex-wrap'>
+          {data.reviews && data.reviews.length > 0 ? (
+            data.reviews.map((item) => (
+              <div className='w-full flex p-4 bg-white' key={item._id}>
+                <img
+                  src={`${backend_url}/${item.user.avatar}`}
+                  alt=''
+                  className='w-[50px] h-[50px] rounded-full border'
+                />
+                {/* info */}
+                <div className='w-full ml-2'>
+                  <div className=' w-full flex justify-between'>
+                    <div className='flex flex-col'>
+                      <h1 className='font-[500]'>{item.user.name}</h1>
+                      <div className='flex'>
+                        {/* {[1, 2, 3, 4, 5].map((item) => {
+                          if (data.ratings >= item) {
+                            return <AiFillStar size={20} className='mr-2 cursor-pointer' color='#f6ba00' key={item} />;
+                          }
+                          return <AiOutlineStar size={20} className='mr-2 cursor-pointer' color='#f6ba00' key={item} />;
+                        })} */}
+                        <Ratings ratings={data.ratings} />
+                      </div>
+                    </div>
+                    <span className='text-gray-400'>{item.createdAt.slice(0, 19)}</span>
+                  </div>
+                  {/* content */}
+                  <h5 className='mt-2 font-Poppins'>{item.comment}</h5>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className='w-full flex justify-center'>No reviews has for this product!</div>
+          )}
         </div>
       )}
 

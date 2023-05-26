@@ -1,23 +1,24 @@
-import API from 'api';
+import { backend_url } from 'api/server';
+import Ratings from 'components/Products/Ratings';
 import ProductCard from 'components/Route/ProductCard/ProductCard';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { getAllEventByShop } from 'redux/actions/event';
 import styles from 'styles/style';
 
 const ShopProfileData = ({ isOwner }) => {
+  const { products } = useSelector((state) => state.product);
+  const { events } = useSelector((state) => state.event);
   const { seller } = useSelector((state) => state.shop);
-  const [products, setProducts] = useState([]);
   const [active, setActive] = useState(1);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    API.get('/product/get-all-products-shop/' + seller._id)
-      .then((res) => {
-        setProducts(res.data.products);
-      })
-      .catch((err) => toast.error(err.response.data.message));
-  }, [seller._id]);
+    dispatch(getAllEventByShop(seller._id));
+  }, [dispatch, seller]);
+
+  const allReviews = products && products.map((item) => item.reviews).flat();
 
   return (
     <div className='w-full'>
@@ -69,9 +70,39 @@ const ShopProfileData = ({ isOwner }) => {
       </div>
 
       {/* Tab content */}
-      <div className='mt-5 grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-3 lg:gap-[25px] xl:grid-cols-4 xl:gap-[20px] mb-12 border-t'>
-        {products.length > 0 && products.map((i, index) => <ProductCard data={i} key={index} isShop={true} />)}
-      </div>
+      {active === 1 && (
+        <div className='mt-5 grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-3 lg:gap-[25px] xl:grid-cols-4 xl:gap-[20px] mb-12 border-t'>
+          {products && products.map((i, index) => <ProductCard data={i} key={index} />)}
+        </div>
+      )}
+
+      {active === 2 && (
+        <div className='mt-5 grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-3 lg:gap-[25px] xl:grid-cols-4 xl:gap-[20px] mb-12 border-t'>
+          {events && events.map((i, index) => <ProductCard data={i} key={index} isEvent={true} />)}
+        </div>
+      )}
+
+      {active === 3 && (
+        <div className='w-full'>
+          {allReviews.map((item) => (
+            <div className='w-full flex my-3 bg-white p-4 rounded-md' key={item._id}>
+              <img
+                src={`${backend_url}/${item.user.avatar}`}
+                alt=''
+                className='w-[50px] h-[50px] rounded-full object-cover'
+              />
+              <div className=''>
+                <div className='flex w-full items-center gap-2'>
+                  <h1 className='font-[600]'>{item.user.name}</h1>
+                  <Ratings ratings={item.rating} />
+                </div>
+                <p className='text-[#000000a7]'>{item.comment}</p>
+                <p className=' mt-2 text-sm text-[#0000007a]'>{new Date(item.createdAt).toLocaleString()}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -2,103 +2,49 @@ import React from 'react';
 import { AiOutlineFolderAdd, AiOutlineGift } from 'react-icons/ai';
 import { VscNewFile } from 'react-icons/vsc';
 import { FiPackage, FiShoppingBag } from 'react-icons/fi';
-import { CiSettings } from 'react-icons/ci';
+import { CiMoneyBill, CiSettings } from 'react-icons/ci';
 import { MdOutlineLocalOffer } from 'react-icons/md';
 import { RxDashboard } from 'react-icons/rx';
 import { Link } from 'react-router-dom';
 import { BiMessageAltDetail } from 'react-icons/bi';
+import { HiOutlineReceiptRefund } from 'react-icons/hi';
+
+const pathUrl = [
+  { title: 'Dashboard', path: 'dashboard', icon: <RxDashboard size={25} /> },
+  { title: 'All Orders', path: 'orders', icon: <FiShoppingBag size={25} /> },
+  { title: 'All Products', path: 'products', icon: <FiPackage size={25} /> },
+  { title: 'Create Product', path: 'create-product', icon: <AiOutlineFolderAdd size={25} /> },
+  { title: 'Events', path: 'events', icon: <MdOutlineLocalOffer size={25} /> },
+  { title: 'Create Event', path: 'create-event', icon: <VscNewFile size={25} /> },
+  { title: 'Withdraw Money', path: 'withdraw-money', icon: <CiMoneyBill size={25} /> },
+  { title: 'Inbox', path: 'inbox', icon: <BiMessageAltDetail size={25} /> },
+  { title: 'Discount Codes', path: 'coupons', icon: <AiOutlineGift size={25} /> },
+  { title: 'Refunds', path: 'refunds', icon: <HiOutlineReceiptRefund size={25} /> },
+];
 
 const DashboardSidebar = ({ active }) => {
   const menuClass = 'hidden 800px:block';
-
+  console.log(active);
   return (
-    <div className='w-full h-[89vh] bg-white shadow-sm overflow-y-auto sticky top-0 left-0 z-10'>
-      {/* Single item */}
-      <Link
-        to='/dashboard'
-        className={`w-full flex items-center p-4 justify-center 800px:justify-start ${
-          active === 1 ? 'text-[crimson]' : 'text-[#555]'
-        }`}
-      >
-        <RxDashboard size={25} />
-        <h5 className={`pl-2 text-lg font-[500] ${menuClass}`}>Dashboard</h5>
-      </Link>
+    <div className='w-full h-full overflow-y-auto'>
+      {pathUrl.map((item, index) => (
+        <Link
+          key={index}
+          to={`/shop/${item.path}`}
+          className={`w-full flex items-center p-4 justify-center 800px:justify-start ${
+            active === item.path && 'text-white !bg-[#3321c8]'
+          } hover:bg-gray-200`}
+        >
+          {item.icon}
+          <h5 className={`pl-2 text-lg font-[500] ${menuClass}`}>{item.title}</h5>
+        </Link>
+      ))}
 
       <Link
-        to='/dashboard-orders'
+        to='/shop/settings'
         className={`w-full flex items-center p-4 justify-center 800px:justify-start ${
-          active === 2 ? 'text-[crimson]' : 'text-[#555]'
-        }`}
-      >
-        <FiShoppingBag size={25} />
-        <h5 className={`pl-2 text-lg font-[500] ${menuClass}`}>All Orders</h5>
-      </Link>
-
-      <Link
-        to='/dashboard-products'
-        className={`w-full flex items-center p-4 justify-center 800px:justify-start ${
-          active === 3 ? 'text-[crimson]' : 'text-[#555]'
-        }`}
-      >
-        <FiPackage size={25} />
-        <h5 className={`pl-2 text-lg font-[500] ${menuClass}`}>All Products</h5>
-      </Link>
-
-      <Link
-        to='/dashboard-create-product'
-        className={`w-full flex items-center p-4 justify-center 800px:justify-start ${
-          active === 4 ? 'text-[crimson]' : 'text-[#555]'
-        }`}
-      >
-        <AiOutlineFolderAdd size={25} />
-        <h5 className={`pl-2 text-lg font-[500] ${menuClass}`}>Create Product</h5>
-      </Link>
-
-      <Link
-        to='/dashboard-events'
-        className={`w-full flex items-center p-4 justify-center 800px:justify-start ${
-          active === 5 ? 'text-[crimson]' : 'text-[#555]'
-        }`}
-      >
-        <MdOutlineLocalOffer size={25} />
-        <h5 className={`pl-2 text-lg font-[500] ${menuClass}`}>All Events</h5>
-      </Link>
-
-      <Link
-        to='/dashboard-create-event'
-        className={`w-full flex items-center p-4 justify-center 800px:justify-start ${
-          active === 6 ? 'text-[crimson]' : 'text-[#555]'
-        }`}
-      >
-        <VscNewFile size={25} />
-        <h5 className={`pl-2 text-lg font-[500] ${menuClass}`}>Create Event</h5>
-      </Link>
-
-      <Link
-        to='/dashboard-inbox'
-        className={`w-full flex items-center p-4 justify-center 800px:justify-start ${
-          active === 7 ? 'text-[crimson]' : 'text-[#555]'
-        }`}
-      >
-        <BiMessageAltDetail size={25} />
-        <h5 className={`pl-2 text-lg font-[500] ${menuClass}`}>Shop Inbox</h5>
-      </Link>
-
-      <Link
-        to='/dashboard-coupons'
-        className={`w-full flex items-center p-4 justify-center 800px:justify-start ${
-          active === 8 ? 'text-[crimson]' : 'text-[#555]'
-        }`}
-      >
-        <AiOutlineGift size={25} />
-        <h5 className={`pl-2 text-lg font-[500] ${menuClass}`}>Discount Codes</h5>
-      </Link>
-
-      <Link
-        to='/dashboard-refunds'
-        className={`w-full flex items-center p-4 justify-center 800px:justify-start ${
-          active === 9 ? 'text-[crimson]' : 'text-[#555]'
-        }`}
+          active === 11 ? 'text-[crimson]' : 'text-[#555]'
+        } hover:bg-gray-200`}
       >
         <CiSettings size={25} />
         <h5 className={`pl-2 text-lg font-[500] ${menuClass}`}>Settings</h5>

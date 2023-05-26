@@ -29,8 +29,15 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: 'Precessing',
+    default: 'Processing',
   },
+  tracker: [
+    {
+      status: { type: String },
+      message: { type: String },
+      createdAt: { type: Date, default: Date.now() },
+    },
+  ],
   paymentInfo: {
     id: {
       type: String,

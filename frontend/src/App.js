@@ -18,19 +18,7 @@ import {
   EventDetailPage,
 } from './routes/Routers';
 
-import {
-  SellerActivationPage,
-  ShopAllCouponPage,
-  ShopAllEventsPage,
-  ShopAllOrdersPage,
-  ShopAllProducts,
-  ShopCreateEventPage,
-  ShopCreatePage,
-  ShopCreateProduct,
-  ShopDashboardPage,
-  ShopHomePage,
-  ShopLoginPage,
-} from './routes/ShopRoutes';
+import { SellerActivationPage, ShopCreatePage, ShopHomePage, ShopLoginPage } from './routes/ShopRoutes';
 import { loadUser } from './redux/actions/user';
 import Store from './redux/store';
 import ProtectedRoute from 'routes/ProtectedRoute';
@@ -41,6 +29,27 @@ import Loader from 'components/shop/Layout/Loader';
 import API from 'api';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
+import ProfileContent from 'components/Profile/ProfileContent';
+import AllOrders from 'components/shop/AllOrders';
+import UserOrderDetails from 'components/User/UserOrderDetails';
+import AllRefundOrders from 'components/Profile/AllRefundOrders';
+import UserInbox from 'components/Profile/UserInbox';
+import TrackOrder from 'components/Profile/TrackOrder';
+import ChangePassword from 'components/Profile/ChangePassword';
+import Address from 'components/Profile/Address';
+import TrackOrderDetails from 'components/User/TrackOrderDetails';
+import DashboardHero from 'components/shop/DashboardHero';
+import Dashboard from 'components/shop/Layout/Dashboard';
+import CreateProduct from 'components/shop/CreateProduct';
+import AllProducts from 'components/shop/AllProducts';
+import CreateEvent from 'components/shop/CreateEvent';
+import AllEvents from 'components/shop/AllEvents';
+import AllCoupons from 'components/shop/AllCoupons';
+import ShopWithdrawMoney from 'components/shop/ShopWithdrawMoney';
+import ShopInbox from 'components/shop/ShopInbox';
+import OrderDetails from 'components/shop/OrderDetails';
+import ShopSettings from 'components/shop/ShopSettings';
+import UserAllOrders from 'components/Profile/UserAllOrders';
 
 const getCookie = (name) => {
   var cookies = document.cookie.split(';');
@@ -67,6 +76,7 @@ const App = () => {
   }
 
   useEffect(() => {
+    getStripeApiKey();
     const tokenUser = getCookie('token-user');
     const tokenShop = getCookie('token-shop');
     tokenUser && Store.dispatch(loadUser());
@@ -75,7 +85,6 @@ const App = () => {
     if (!tokenUser || tokenShop) {
       Store.dispatch({ type: 'StartApp' });
     }
-    getStripeApiKey();
   }, []);
 
   if (isLoading || !isStart) {
@@ -84,13 +93,6 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      {stripeApiKey && (
-        <Elements stripe={loadStripe(stripeApiKey)}>
-          <Routes>
-            <Route path='/payment' element={<PaymentPage />} />
-          </Routes>
-        </Elements>
-      )}
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/login' element={<LoginPage />} />
@@ -104,14 +106,28 @@ const App = () => {
         <Route path='/faq' element={<FAQPage />} />
         <Route path='/checkout' element={<CheckoutPage />} />
         <Route path='/order/success' element={<OrderSuccessPage />} />
+
+        {/* user path */}
         <Route
-          path='/profile'
+          path='/user/'
           element={
             <ProtectedRoute>
               <ProfilePage />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<ProfileContent />} />
+          <Route path='orders' element={<UserAllOrders />} />
+          <Route path='refunds' element={<AllRefundOrders />} />
+          <Route path='inboxes' element={<UserInbox />} />
+          <Route path='track' element={<TrackOrder />} />
+          <Route path='update-password' element={<ChangePassword />} />
+          <Route path='addresses' element={<Address />} />
+          {/* path user/order/id */}
+          <Route path='order/:id' element={<UserOrderDetails />} />
+          <Route path='track/order/:id' element={<TrackOrderDetails />} />
+        </Route>
+
         <Route path='/shop-create' element={<ShopCreatePage />} />
         <Route path='/seller/activation/:activation_token' element={<SellerActivationPage />} />
         <Route path='/shop-login' element={<ShopLoginPage />} />
@@ -123,63 +139,42 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
+
         <Route
-          path='/dashboard'
+          path='/shop/'
           element={
             <SellerProtectedRoute>
-              <ShopDashboardPage />
+              <Dashboard />
             </SellerProtectedRoute>
           }
-        />
+        >
+          <Route index element={<DashboardHero />} />
+          <Route path='dashboard' element={<DashboardHero />} />
+          <Route path='settings' element={<ShopSettings />} />
+          <Route path='create-product' element={<CreateProduct />} />
+          <Route path='products' element={<AllProducts />} />
+          <Route path='create-event' element={<CreateEvent />} />
+          <Route path='events' element={<AllEvents />} />
+          <Route path='coupons' element={<AllCoupons />} />
+          <Route path='orders' element={<AllOrders />} />
+          <Route path='refunds' element={<AllRefundOrders />} />
+          <Route path='withdraw-money' element={<ShopWithdrawMoney />} />
+          <Route path='inbox' element={<ShopInbox />} />
+          <Route path='order/:id' element={<OrderDetails />} />
+        </Route>
+
         <Route
-          path='/dashboard-create-product'
+          path='/payment'
           element={
-            <SellerProtectedRoute>
-              <ShopCreateProduct />
-            </SellerProtectedRoute>
-          }
-        />
-        <Route
-          path='/dashboard-products'
-          element={
-            <SellerProtectedRoute>
-              <ShopAllProducts />
-            </SellerProtectedRoute>
-          }
-        />
-        <Route
-          path='/dashboard-create-event'
-          element={
-            <SellerProtectedRoute>
-              <ShopCreateEventPage />
-            </SellerProtectedRoute>
-          }
-        />
-        <Route
-          path='/dashboard-events'
-          element={
-            <SellerProtectedRoute>
-              <ShopAllEventsPage />
-            </SellerProtectedRoute>
-          }
-        />
-        <Route
-          path='/dashboard-coupons'
-          element={
-            <SellerProtectedRoute>
-              <ShopAllCouponPage />
-            </SellerProtectedRoute>
-          }
-        />
-        <Route
-          path='/dashboard-orders'
-          element={
-            <SellerProtectedRoute>
-              <ShopAllOrdersPage />
-            </SellerProtectedRoute>
+            stripeApiKey && (
+              <Elements stripe={loadStripe(stripeApiKey)}>
+                <PaymentPage />
+              </Elements>
+            )
           }
         />
       </Routes>
+
       {/* Notification config */}
       <ToastContainer
         position='top-right'

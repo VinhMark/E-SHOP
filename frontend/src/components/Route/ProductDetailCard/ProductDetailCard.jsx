@@ -74,7 +74,7 @@ const ProductDetailCard = ({ setOpen, data, handleAddToWishList, handleRemoveToW
                 </div>
 
                 {/* Total sell */}
-                <h5 className='text-red-500 text-[16px] mt-5'>({data.total_sell}) Sold out</h5>
+                <h5 className='text-red-500 text-[16px] mt-5'>{data.sold_out || 0} (sold)</h5>
               </div>
 
               {/* Information product, right side */}

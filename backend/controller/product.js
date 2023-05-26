@@ -6,6 +6,8 @@ const multer = require('../multer');
 const ErrorHandler = require('../utils/ErrorHandler');
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const removeImg = require('../utils/removeImg');
+const { isAuthenticated } = require('../middleware/auth');
+const Order = require('../model/order');
 
 // Create product
 router.post(
@@ -128,6 +130,22 @@ router.get(
     }
   })
 );
+router.get(
+  '/get-product-id/:id',
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const id = req.params.id;
+      const product = await Product.findById(id);
+
+      return res.status(201).json({
+        success: true,
+        product,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
 
 // Get all product
 router.get(
@@ -165,6 +183,63 @@ router.get(
       } else {
         products = await Product.find().sort({ sold_out: -1 });
       }
+      return res.status(200).json({ success: true, products });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+//Review for a product
+router.post(
+  '/crate-new-review',
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { user, rating, comment, productId, orderId } = req.body;
+      const product = await Product.findById(productId);
+
+      const isReviewed = product.reviews.findIndex((i) => i.user._id === req.user._id.toString());
+      if (isReviewed >= 0) {
+        product.reviews[isReviewed].rating = rating;
+        product.reviews[isReviewed].comment = comment;
+        product.reviews[isReviewed].user = user;
+      } else {
+        product.reviews.push({ user, rating, comment, productId });
+      }
+
+      const avg = product.reviews.reduce((value, next) => {
+        return value + next.rating;
+      }, 0);
+
+      product.ratings = avg / product.reviews.length;
+
+      await product.save({ validateBeforeSave: false });
+
+      // update order
+      const order = await Order.findByIdAndUpdate(
+        orderId,
+        { $set: { 'cart.$[elem].isReviewed': true } },
+        { arrayFilters: [{ 'elem._id': productId }], new: true }
+      );
+
+      return res.status(201).json({
+        success: true,
+        message: 'Create review successfully!',
+        order,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// Get all product
+router.get(
+  '/get-all-products-shop/:shopId',
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const products = await Product.find({ shopId: req.params.shopId });
       return res.status(200).json({ success: true, products });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));

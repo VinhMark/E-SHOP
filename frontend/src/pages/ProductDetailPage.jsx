@@ -10,30 +10,38 @@ const ProductDetailPage = () => {
   const { slug } = useParams();
   const [searchParams] = useSearchParams();
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
   const isEvent = searchParams.get('isEvent');
 
   useEffect(() => {
+    setLoading(true);
     if (isEvent) {
       API.get('/event/get-event-by-slug/' + slug)
         .then((res) => {
           setData(res.data.event);
+          setLoading(false);
         })
-        .catch((err) => console.log(err.response.data));
+        .catch((err) => {
+          setLoading(false);
+          console.log(err.response.data);
+        });
     } else {
       API.get('/product/get-product-slug/' + slug)
         .then((res) => {
+          setLoading(false);
           setData(res.data.product);
         })
-        .catch((err) => console.log(err.response.data));
+        .catch((err) => {
+          setLoading(false);
+          console.log(err.response.data);
+        });
     }
   }, [slug, isEvent]);
-
-  console.log(data)
 
   return (
     <div>
       <Header activeHeading={3} />
-      <ProductDetail data={data} />
+      <ProductDetail data={data} loading={loading} />
       {data && <SuggestedProduct data={data} />}
       <Footer />
     </div>
