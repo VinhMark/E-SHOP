@@ -8,7 +8,7 @@ import styles from 'styles/style';
 import socketIO from 'socket.io-client';
 import API from 'api';
 
-const ENDPOINT = 'http://localhost:4000';
+const ENDPOINT = 'http://localhost:8000';
 const socketId = socketIO(ENDPOINT, { transports: ['websocket'] });
 const UserInbox = () => {
   const { user } = useSelector((state) => state.user);
@@ -40,6 +40,10 @@ const UserInbox = () => {
   }, [currentChat, user]);
 
   useEffect(() => {
+    messagesRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  useEffect(() => {
     socketId.on('getMessage', (data) => {
       setArrivalMessage({
         sender: data.senderId,
@@ -48,20 +52,22 @@ const UserInbox = () => {
         images: data.images,
         conversationId: data.conversationId,
       });
+
+      setConversations(
+        conversations.map((item) => {
+          if (item._id === data.conversationId) {
+            return { ...item, lastMessage: data.message, lastMessageId: data.sender };
+          }
+          return item;
+        })
+      );
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (arrivalMessage) {
       currentChat?.members.includes(arrivalMessage.sender) && setMessages((prev) => [...prev, arrivalMessage]);
-
-      setConversations((prev) => {
-        prev.forEach((item) => {
-          if (item._id === arrivalMessage.conversationId) {
-            return { ...item, lastMessage: arrivalMessage.message, lastMessageId: arrivalMessage.sender };
-          }
-        });
-      });
     }
   }, [arrivalMessage, currentChat]);
 
@@ -280,7 +286,7 @@ const Inbox = ({
       )}
 
       {/* messages */}
-      <div className='h-[500px] overflow-y-auto p-5' ref={messagesRef}>
+      <div className='h-[500px] overflow-y-auto p-5'>
         {messages.map((item) => {
           return (
             <div
@@ -309,6 +315,7 @@ const Inbox = ({
             </div>
           );
         })}
+        <div ref={messagesRef}></div>
       </div>
 
       {/* Send message input */}

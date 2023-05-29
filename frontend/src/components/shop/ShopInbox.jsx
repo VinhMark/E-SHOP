@@ -1,5 +1,5 @@
 import API from 'api';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import { TfiGallery } from 'react-icons/tfi';
 import { useSelector } from 'react-redux';
@@ -8,7 +8,7 @@ import socketIO from 'socket.io-client';
 import { backend_url } from 'api/server';
 import styles from 'styles/style';
 
-const ENDPOINT = 'http://localhost:4000';
+const ENDPOINT = 'http://localhost:8000';
 const socketId = socketIO(ENDPOINT, { transports: ['websocket'] });
 
 const ShopInbox = () => {
@@ -20,8 +20,13 @@ const ShopInbox = () => {
   const [currentChat, setCurrentChat] = useState(null);
   const [newMessage, setNewMessage] = useState('');
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const messagesRef = useRef();
 
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    messagesRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   useEffect(() => {
     if (seller) {
@@ -134,6 +139,7 @@ const ShopInbox = () => {
           setCurrentChat={setCurrentChat}
           currentChat={currentChat}
           online={onlineCheck(currentChat)}
+          messagesRef={messagesRef}
         />
       ) : (
         <>
@@ -224,6 +230,7 @@ const Inbox = ({
   setCurrentChat,
   currentChat,
   online,
+  messagesRef,
 }) => {
   useEffect(() => {
     return () => setMessages([]);
@@ -306,6 +313,7 @@ const Inbox = ({
             </div>
           );
         })}
+        <div ref={messagesRef}></div>
       </div>
 
       {/* Send message input */}

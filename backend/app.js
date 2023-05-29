@@ -4,6 +4,7 @@ const app = express();
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const connectServerIO = require('./socket');
 
 app.use(express.json());
 app.use(cookieParser());
@@ -22,6 +23,10 @@ if (process.env.NODE_ENV !== 'PRODUCTION') {
     path: 'backend/config/.env',
   });
 }
+
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+connectServerIO(io);
 
 // Import routers
 const user = require('./controller/user');
@@ -47,4 +52,4 @@ app.use('/api/v2/message', message);
 // It's for ErrorHandling
 app.use(ErrorHandler);
 
-module.exports = app;
+module.exports = server;

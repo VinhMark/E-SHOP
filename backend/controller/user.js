@@ -11,6 +11,7 @@ const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const removeImg = require('../utils/removeImg');
 const { isAuthenticated } = require('../middleware/auth');
 const multer = require('../multer');
+const Product = require('../model/product');
 
 router.post('/create-user', upload.single('file'), async (req, res, next) => {
   try {
@@ -170,6 +171,13 @@ router.put(
         email: newUser.email,
         phone: newUser.phone,
       });
+
+      // const product = await Product.updateMany(
+      //   { 'reviews.user._id': req.user._id.toString() },
+      //   { $set: { 'reviews.$[elem].user': userUpdate } },
+      //   { arrayFilters: [{ 'elem.user._id': req.user._id.toString() }], new: true }
+      // );
+
       return res.status(201).json({
         success: true,
         user: userUpdate,
@@ -193,6 +201,12 @@ router.patch(
       const fileUrl = path.join(req.file.filename);
       const user = await userModel.findByIdAndUpdate(req.user._id, { avatar: fileUrl });
       user.avatar = fileUrl;
+
+      const product = await Product.updateMany(
+        { 'reviews.user._id': req.user._id },
+        { $set: { 'reviews.$[elem].user.avatar': fileUrl } },
+        { arrayFilters: [{ 'elem.user._id': req.user._id }], new: true }
+      );
 
       return res.status(201).json({
         success: true,
